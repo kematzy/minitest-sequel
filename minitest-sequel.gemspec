@@ -28,9 +28,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency 'minitest', '~> 5.7', '>= 5.7.0'
-  spec.add_runtime_dependency 'sequel', '>= 4.26'
+  spec.add_runtime_dependency 'sequel', '~> 4.26'
   
   spec.add_development_dependency "bundler", "~> 1.10"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest"
 end
