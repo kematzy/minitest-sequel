@@ -13,15 +13,16 @@ Please help out with missing features / functionality.
 ## Model Definitions
 
 
-### `assert_have_column (obj, attribute, opts={}, msg=nil)`
+### `assert_have_column ()`
 
 Conveniently test your Model definitions as follows:
 
-      let(:m) { Post.first }
-      
-      it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false ) }
-      
-      # assert_have_column(<instance>, <column_name>, <options>, <custom_error_message>)
+    let(:m) { Post.first }
+    
+    it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false ) }
+    
+    # definition of args
+    assert_have_column(<instance>, <column_name>, <options>, <custom_error_message>)
 
 
 The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options. 
@@ -52,14 +53,30 @@ To test options with a value that is either `nil`, `true` or `false`, please use
 numbers as 'strings' instead, ie: '1' instead of 1.
 
 
+<br>
+<br>
+
 ----
+
+<br>
+
 
 ## Associations 
 
-Conveniently test model associations quickly and easily with these Minitest assertions.
+Conveniently test model associations quickly and easily with these Minitest assertions:
+
+* `assert_association_one_to_one`
+* `assert_association_one_to_many`
+* `assert_association_many_to_one`
+* `assert_association_many_to_many`
+* `assert_association`
+
+<br>
+<br>
 
 
-### `:one_to_one`  => `assert_association_one_to_one`
+### `:one_to_one` association
+
 
 A model defined with an association like this:
 
@@ -67,17 +84,17 @@ A model defined with an association like this:
       one_to_one :first_comment, :class=>:Comment, :order=>:id
     end
 
-Can be easily and quickly tested like this:
+Can be easily and quickly tested with `assert_association_one_to_one()` like this:
 
-    let(:a) { Author.first }
+    let(:m) { Post.first }
     
-    it { assert_association_one_to_one(a, :key_post) }    
+    it { assert_association_one_to_one(m, :first_comment) }    
     
     
     # definition of args
     assert_association_one_to_one( 
       <model_instance>, 
-      <association_name>,   # ie: :comments
+      <association_name>,   # ie: :first_comment
       <options>,
       <custom_error_message>
     )
@@ -85,9 +102,9 @@ Can be easily and quickly tested like this:
 
 In the event of errors an extensive error message is provided:
 
-      # example error message
-      
-      Expected Author to have a :one_to_one association :key_posts but no association ':key_posts' was found - 
+    # example error message
+    
+    Expected Author to have a :one_to_one association :key_posts but no association ':key_posts' was found - 
       available associations are: [ \
         {:attribute=>:posts, :type=>:one_to_many, :class=>:Post, :keys=>[:author_id]}, \
         {:attribute=>:key_post, :type=>:one_to_one, :class=>:Post, :keys=>[:author_id]} \
@@ -96,7 +113,7 @@ In the event of errors an extensive error message is provided:
 <br>
 <br>
 
-### `:one_to_many`  => `assert_association_one_to_many`
+### `:one_to_many` association
 
 A model defined with an association like this:
 
@@ -104,7 +121,7 @@ A model defined with an association like this:
       one_to_many :comments
     end
 
-Can be easily and quickly tested like this:
+Can be easily and quickly tested with `assert_association_one_to_many()` like this:
 
     let(:p) { Post.first }
     
@@ -116,7 +133,7 @@ As above the assertion provides an extensive error message if something is wrong
 <br>
 <br>
 
-### `:many_to_one`  => `assert_association_many_to_one`
+### `:many_to_one`  association
 
 A model defined with an association like this:
 
@@ -124,19 +141,20 @@ A model defined with an association like this:
       many_to_one :author
     end
 
-Can be easily and quickly tested like this:
+Can be easily and quickly tested with `assert_association_many_to_one()` like this:
 
     let(:p) { Post.first }
     
     it { assert_association_many_to_one(p, :author) }
     
 
+
 As above the assertion provides an extensive error message if something is wrong.
 
 <br>
 <br>
 
-### `:many_to_many`  => `assert_association_many_to_many`
+### `:many_to_many`  association
 
 A model defined with an association like this:
 
@@ -144,7 +162,7 @@ A model defined with an association like this:
       many_to_many :categories
     end
 
-Can be easily and quickly tested like this:
+Can be easily and quickly tested with `assert_association_many_to_many()` like this:
 
     let(:p) { Post.first }
     
@@ -166,8 +184,10 @@ or
       ]
 
 
+<br>
+<br>
 
-### `assert_association`
+### `assert_association() assertion`
 
 if the above assertion methods are insufficient, you can use the base `assert_association` method instead.
 
@@ -177,12 +197,12 @@ if the above assertion methods are insufficient, you can use the base `assert_as
     
     
     # 
-    assert_association( <model_class>, <association_type>, \
-                        <association_name>, <options>, \
-                        <custom_error_message> )
-    
+    assert_association(
+      <model_class>, <association_type>, <association_name>, <options>, <custom_error_message>
+    )
 
 
+<br>
 <br>
 
 ----
@@ -191,7 +211,7 @@ if the above assertion methods are insufficient, you can use the base `assert_as
 
 ## Validations
 
-**NOTE! NOT YET IMPLEMENTED!**
+**NOTE! NOT YET IMPLEMENTED! WORK IN PROGRESS**
 
 
 If you are using the recommended `:validation_helpers` plugin in your app, the following instance validation methods 
@@ -242,7 +262,10 @@ A model defined with validations like this:
       end
     end
 
+Can be quickly tested like this:
 
+    <snip...>
+    
     let(:m) { Post.first }
     
     it "shoud validate presence of :title column" do
