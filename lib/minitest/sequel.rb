@@ -143,6 +143,54 @@ module Minitest
       assert matching, msg
       
     end
+    
+    def assert_association_one_to_one(obj, attribute, opts={}, msg=nil)
+      assert_association(obj.class, :one_to_one, attribute, opts, msg)
+    end
+  
+    def assert_association_one_to_many(obj, attribute, opts={}, msg=nil)
+      assert_association(obj.class, :one_to_many, attribute, opts, msg)
+    end
+  
+    def assert_association_many_to_one(obj, attribute, opts={}, msg=nil)
+      assert_association(obj.class, :many_to_one, attribute, opts, msg)
+    end
+  
+    def assert_association_many_to_many(obj, attribute, opts={}, msg=nil)
+      assert_association(obj.class, :many_to_many, attribute, opts, msg)
+    end
+  
+    def assert_association(klass, association_type, attribute, opts={}, msg=nil)
+      msg = msg.nil? ? '' : "#{msg}\n"
+      msg << "Expected #{klass.inspect} to have a #{association_type.inspect} association #{attribute.inspect}"
+      assoc = klass.association_reflection(attribute) || {}
+      if assoc.empty?
+        msg << " but no association '#{attribute.inspect}' was found"
+        arr = []
+        klass.associations.each do |a|
+          o = klass.association_reflection(a)
+          if o[:type] == :many_to_many
+            arr << { attribute: o[:name], type: o[:type], class: o[:class_name].to_sym, join_table: o[:join_table], left_keys: o[:left_keys], right_keys: o[:right_keys] }
+          else
+            arr << { attribute: o[:name], type: o[:type], class: o[:class_name].to_sym, keys: o[:keys] }
+          end
+        end
+        msg << " - \navailable associations are: [ #{arr.join(', ')} ]\n"
+        assert false, msg
+      else
+        matching = assoc[:type] == association_type
+        err_msg = []; conf_msg = []
+        opts.each { |key, value|
+          conf_msg << { key => value } 
+          if assoc[key]!= value
+            err_msg << { key => assoc[key] }
+            matching = false
+          end
+        }
+        msg << " with given options: #{conf_msg.join(', ')} but should be #{err_msg.join(', ')}"
+        assert matching, msg
+      end
+    end
     private 
     
     def _convert_value(val)
