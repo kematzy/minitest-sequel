@@ -191,6 +191,62 @@ module Minitest
         assert matching, msg
       end
     end
+    
+    ## VALIDATIONS
+    
+    def assert_validates_presence(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :presence, attribute, opts, msg)
+    end
+    
+    def assert_validates_length(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :length, attribute, opts, msg)
+    end
+    
+    def assert_validates_exact_length(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :exact_length, attribute, opts, msg)
+    end
+    
+    def assert_validates_length_range(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :length_range, attribute, opts, msg)
+    end
+    
+    def assert_validates_max_length(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :max_length, attribute, opts, msg)
+    end
+    
+    def assert_validates_min_length(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :min_length, attribute, opts, msg)
+    end
+    
+    def assert_validates_format(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :format, attribute, opts, msg)
+    end
+    
+    def assert_validates_includes(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :includes, attribute, opts, msg)
+    end
+    
+    def assert_validates_integer(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :integer, attribute, opts, msg)
+    end
+    
+    def assert_validates_numeric(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :numeric, attribute, opts, msg)
+    end
+    
+    def assert_validates_not_string(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :not_string, attribute, opts, msg)
+    end
+    
+    def assert_validates_unique(obj, attribute, opts={}, msg=nil)
+      assert_validates(obj, :unique, attribute, opts, msg)
+    end
+    
+    def assert_validates(obj, validation_type, attribute, opts={}, msg=nil) 
+      
+    end
+    
+    
     private 
     
     def _convert_value(val)
@@ -206,6 +262,11 @@ module Minitest
            end
       _v
     end
+    
+    def _valid_validation_options
+      [ :allow_blank, :allow_missing, :allow_nil, :message ]
+    end
+    
   end
   
   module Assertions
