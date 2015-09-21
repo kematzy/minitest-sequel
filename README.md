@@ -298,8 +298,11 @@ Or install it yourself as:
 In your project's `spec/spec_helper.rb` or `test/test_helper.rb` file ensure the following code is present:
 
     
+    gem 'minitest'
+    
+    require 'minitest/sequel'   # NB!! must be loaded before minitest/autorun
     require 'minitest/autorun'
-    require 'minitest/sequel'
+     
     require 'sqlite3' # using sqlite for tests
     
     # The preferred default validations plugin, which uses instance-level methods.
@@ -315,6 +318,8 @@ In your project's `spec/spec_helper.rb` or `test/test_helper.rb` file ensure the
       <snip...>
     end
     
+    <snip...>
+
 
 Then in your tests you should be good to go when using the sequel assertions.
 
