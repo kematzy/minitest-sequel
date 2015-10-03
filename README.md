@@ -23,7 +23,12 @@ let(:m) { Post.first }
 it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false ) }
     
  # definition of args
-assert_have_column(<instance>, <column_name>, <options>, <custom_error_message>)
+assert_have_column(
+  <instance>, 
+  <column_name>, 
+  <options>, 
+  <custom_error_message>
+)
 ````
 
 The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options. 
@@ -111,11 +116,11 @@ In the event of errors an extensive error message is provided:
 ````
  # example error message
     
-Expected Author to have a :one_to_one association :key_posts but no association ':key_posts' was found - 
-  available associations are: [ \
-   {:attribute=>:posts, :type=>:one_to_many, :class=>:Post, :keys=>[:author_id]}, \
-   {:attribute=>:key_post, :type=>:one_to_one, :class=>:Post, :keys=>[:author_id]} \
-  ]
+Expected Author to have a :one_to_one association :key_posts but no association \
+ ':key_posts' was found - available associations are: [ \
+  {:attribute=>:posts, :type=>:one_to_many, :class=>:Post, :keys=>[:author_id]}, \
+  {:attribute=>:key_post, :type=>:one_to_one, :class=>:Post, :keys=>[:author_id]} \
+ ]
 ````
 
 <br>
@@ -196,12 +201,12 @@ Expected Category to have a :many_to_many association :posts with given options:
 or
   
 ````
-Expected Category to have a :many_to_many association :post but no association ':post' was found - \
-  available associations are: [ \
-    { :attribute=>:posts, :type=>:many_to_many, :class=>:Post, :join_table=>:categories_posts, \
-      :left_keys=>[:category_id], :right_keys=>[:post_id]
-    } 
-  ]
+Expected Category to have a :many_to_many association :post but no association \
+ ':post' was found - available associations are: [ \
+  { :attribute=>:posts, :type=>:many_to_many, :class=>:Post, :join_table=>:categories_posts, \
+    :left_keys=>[:category_id], :right_keys=>[:post_id]
+  } 
+ ]
 ````
 
 <br>
@@ -291,7 +296,7 @@ end
 Can be quickly tested like this:
 
 ````ruby
-<snip...>
+ # <snip...>
     
 let(:m) { Post.first }
     
@@ -348,10 +353,10 @@ DB = Sequel.sqlite # :memory
     
 DB.create_table(:posts) do
   primary_key :id
-  <snip...>
+  # <snip...>
 end
     
-<snip...>
+ # <snip...>
 ````
 
 Then in your tests you should be good to go when using the sequel assertions.
