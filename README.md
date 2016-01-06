@@ -13,14 +13,16 @@ Please help out with missing features / functionality.
 ## Model Definitions
 
 
-### `assert_have_column ()`
+### `assert_have_column ()` or `.must_have_column()`
 
 Conveniently test your Model definitions as follows:
 
 ````ruby
 let(:m) { Post.first }
 
-it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false ) }
+it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false) }
+
+it { m.must_have_column(:title, type: :string, allow_null: :false) }
     
  # definition of args
 assert_have_column(
@@ -73,9 +75,13 @@ numbers as 'strings' instead, ie: `'1'` instead of `1`.
 Conveniently test model associations quickly and easily with these Minitest assertions:
 
 * `assert_association_one_to_one`
+
 * `assert_association_one_to_many`
+
 * `assert_association_many_to_one`
+
 * `assert_association_many_to_many`
+
 * `assert_association`
 
 <br>
@@ -90,7 +96,7 @@ A model defined with an association like this:
 
 ````ruby
 class Post < Sequel::Model
-  one_to_one :first_comment, :class=>:Comment, :order=>:id
+  one_to_one :first_comment, class: :Comment, order: :id
 end
 ````
 
@@ -99,7 +105,9 @@ Can be easily and quickly tested with `assert_association_one_to_one()` like thi
 ````ruby
 let(:m) { Post.first }
     
-it { assert_association_one_to_one(m, :first_comment) }    
+it { assert_association_one_to_one(m, :first_comment)
+ # or
+it { m.must_have_one_to_one_association(:first_comment) }
     
     
  # definition of args
@@ -142,6 +150,8 @@ Can be easily and quickly tested with `assert_association_one_to_many()` like th
 let(:p) { Post.first }
   
 it { assert_association_one_to_many(p, :comments) }
+ # or
+it { m.must_have_one_to_many_association(:comments) }
 ````    
 
 As above the assertion provides an extensive error message if something is wrong.
@@ -165,6 +175,8 @@ Can be easily and quickly tested with `assert_association_many_to_one()` like th
 let(:p) { Post.first }
   
 it { assert_association_many_to_one(p, :author) }
+ # or
+it { m.must_have_many_to_one_association(:author) }
 ````    
 
 
@@ -189,6 +201,8 @@ Can be easily and quickly tested with `assert_association_many_to_many()` like t
 let(:p) { Post.first }
  
 it { assert_association_many_to_many(p, :categories) }
+ # or
+it { m.must_have_many_to_many_association(:categories) }
 ````    
 
 If something is wrong an extensive error message is provided:
@@ -213,12 +227,15 @@ Expected Category to have a :many_to_many association :post but no association \
 <br>
 
 ### `assert_association() assertion`
+spec: `.must_have_association()`
 
 if the above assertion methods are insufficient, you can use the base `assert_association` method instead.
 
 ````ruby
 it "should have a :one_through_one association" do
   assert_association(Post, :one_through_one, :author)
+   # or
+  Post.must_have_association(:one_through_one, :author)
 end
 
  # definition of args
@@ -338,13 +355,13 @@ In your project's `spec/spec_helper.rb` or `test/test_helper.rb` file ensure the
 ````ruby   
 gem 'minitest'
     
-require 'minitest/sequel'   # NB!! must be loaded before minitest/autorun
 require 'minitest/autorun'
+require 'minitest/sequel'  # NB!! can be loaded after minitest/autorun
  
 require 'sqlite3' # using sqlite for tests
     
- # The preferred default validations plugin, which uses instance-level methods.
-Sequel::Model.plugin(:validation_helpers)
+ # The preferred default validations plugin, which uses class-level methods.
+Sequel::Model.plugin(:validation_class_methods)
     
  # connect to database
 DB = Sequel.sqlite # :memory
