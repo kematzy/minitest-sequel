@@ -462,7 +462,7 @@ it { model.must_validate_acceptance_of(:toc, { message: '...' }) }
 <br>
 
 
-### `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
+#### `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
 alias: `:assert_validates_confirmation_of`
 
 Test for validating the confirmation of a model's attribute.
