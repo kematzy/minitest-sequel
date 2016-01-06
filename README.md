@@ -284,158 +284,196 @@ If you are using the recommended `:validation_class_methods` plugin in your app,
  * `assert_validates_confirmation()`
 
 With all valid options checked
- 
 
-* `assert_validates_presence(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_presence_of`
-    
-    Test for validating presence of a model attribute
-    
-    ```ruby
-    it { assert_validates_presence(model, :title) }
-    it { model.must_validate_presence_of(:title, { message: '...' }) }
-    ```
+---
 
-* `assert_validates_length(obj, attribute, opts = {}, msg = nil)`
-    alias `:assert_validates_length_of`
-    
-    Test for validating the length of a model's attribute.
-    
-    Available options:
-    
-     * :message - The message to use (no default, overrides :nil_message, :too_long, :too_short, and :wrong_length options if present)
-     * :nil_message - The message to use use if :maximum option is used and the value is nil (default: 'is not present')
-     
-     * :too_long - The message to use use if it the value is too long (default: 'is too long')
-     
-     * :too_short - The message to use use if it the value is too short (default: 'is too short')
-     
-     * :wrong_length - The message to use use if it the value is not valid (default: 'is the wrong length')
-     
-     Size related options:
-     
-     * :is - The exact size required for the value to be valid (no default)
-     
-     * :minimum - The minimum size allowed for the value (no default)
-     
-     * :maximum - The maximum size allowed for the value (no default)
-     
-     * :within - The array/range that must include the size of the value for it to be valid (no default)
-     
-    ```ruby
-    it { assert_validates_length(model, :title, { maximum: 12 }) }
-    it { model.must_validate_length_of(:title, { within: 4..12 }) }
-    ```
-    
-* `assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)`
-    alias: `:assert_validates_exact_length_of`
-    
-    Test for validating the exact length of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_exact_length(model, :title, 12, { message: '...' }) }
-    it { model.must_validate_exact_length_of(:title, 12, { message: '...' }) }
-    ```
+### `assert_validates_presence(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_presence_of`
 
-* `assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)`
-    alias: `:assert_validates_length_range_of`
+Test for validating presence of a model attribute
     
-    Test for validating the exact length of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_length_range(model, :title, 4..12, { message: '...' }) }
-    it { model.must_validate_length_range_of(:title, 4..12, { message: '...' }) }
-    ```
+```ruby
+it { assert_validates_presence(model, :title) }
+it { model.must_validate_presence_of(:title, { message: '...' }) }
+```
+<br>
 
-* `assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)`
-    alias: `:assert_validates_max_length_of`
-    
-    Test for validating the maximum length of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_max_length(model, :title, 12, { message: '...' }) }
-    it { model.must_validate_max_length_of(:title, 12, { message: '...' }) }
-    ```
 
-* `assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)`
-    alias: `:assert_validates_min_length_of`
-    
-    Test for validating the minimum length of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_min_length(model, :title, 12, { message: '...' }) }
-    it { model.must_validate_min_length_of(:title, 12, { message: '...' }) }
-    ```
-    
-* `assert_validates_format(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_format_of`
-    
-    Test for validating the format of a model's attribute with a regexp.
-    
-    ```ruby
-    it { assert_validates_format(model, :title, 12, { with: /[a-z+]/ }) }
-    it { model.must_validate_format_of(:title, 12, { with: /[a-z]+/ }) }
-    ```
-    
-* `assert_validates_inclusion(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_inclusion_of`
-    
-    Test for validating that a model's attribute is within a specified range or set of values.
-    
-    ```ruby
-    it { assert_validates_inclusion(model, :status, { in: [:a, :b, :c] }) }
-    it { model.must_validate_inclusion_of(:status, { in: [:a, :b, :c] }) }
-    ```
+### `assert_validates_length(obj, attribute, opts = {}, msg = nil)`
+alias `:assert_validates_length_of`
 
-* `assert_validates_integer(obj, attribute, opts = {}, msg = nil)`
-    alias: none
-    
-    Test for validating that a a model's attribute is an integer.
-    
-    ```ruby
-    it { assert_validates_integer(model, :author_id, { message: '...' }) }
-    it { model.must_validate_integer_of(:author_id, { message: '...' }) }
-    ```
-    
-* `assert_validates_numericality(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_numericality_of`
-    
-    Test for validating that a model's attribute is numeric (number).
-    
-    ```ruby
-    it { assert_validates_numericality(model, :author_id, { message: '...' }) }
-    it { model.must_validate_numericality_of(:author_id, { message: '...' }) }
-    ```
-    
-* `assert_validates_uniqueness(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_uniqueness_of`
-    
-    Test for validating that a model's attribute is unique.
-    
-    ```ruby
-    it { assert_validates_uniqueness(model, :urlslug, { message: '...' }) }
-    it { model.must_validate_uniqueness_of(:urlslug, { message: '...' }) }
-    ``` 
+Test for validating the length of a model's attribute.
 
-* `assert_validates_acceptance(obj, attribute, opts = {}, msg = nil)`
-    alias: `assert_validates_acceptance_of`
-    
-    Test for validating the acceptance of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_acceptance(Order.new, :toc, { message: '...' }) }
-    it { model.must_validate_acceptance_of(:toc, { message: '...' }) }
-    ```
+Available options:
 
-* `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
-    alias: `:assert_validates_confirmation_of`
-    
-    Test for validating the confirmation of a model's attribute.
-    
-    ```ruby
-    it { assert_validates_confirmation(User.new, :password, { message: '...' }) }
-    it { User.new.must_validate_confirmation_of(:password, { message: '...' }) }
-    ```
+* :message - The message to use (no default, overrides :nil_message, :too_long, :too_short, and :wrong_length options if present)
+
+* :nil_message - The message to use use if :maximum option is used and the value is nil (default: 'is not present')
+
+* :too_long - The message to use use if it the value is too long (default: 'is too long')
+
+* :too_short - The message to use use if it the value is too short (default: 'is too short')
+
+* :wrong_length - The message to use use if it the value is not valid (default: 'is the wrong length')
+
+Size related options:
+
+* :is - The exact size required for the value to be valid (no default)
+
+* :minimum - The minimum size allowed for the value (no default)
+
+* :maximum - The maximum size allowed for the value (no default)
+
+* :within - The array/range that must include the size of the value for it to be valid (no default)
+
+```ruby
+it { assert_validates_length(model, :title, { maximum: 12 }) }
+it { model.must_validate_length_of(:title, { within: 4..12 }) }
+```
+<br>
+
+
+### `assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)`
+alias: `:assert_validates_exact_length_of`
+
+Test for validating the exact length of a model's attribute.
+
+```ruby
+it { assert_validates_exact_length(model, :title, 12, { message: '...' }) }
+it { model.must_validate_exact_length_of(:title, 12, { message: '...' }) }
+```
+<br>
+
+
+### `assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)`
+alias: `:assert_validates_length_range_of`
+
+Test for validating the exact length of a model's attribute.
+
+```ruby
+it { assert_validates_length_range(model, :title, 4..12, { message: '...' }) }
+it { model.must_validate_length_range_of(:title, 4..12, { message: '...' }) }
+```
+
+<br>
+
+
+### `assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)`
+alias: `:assert_validates_max_length_of`
+
+Test for validating the maximum length of a model's attribute.
+
+```ruby
+it { assert_validates_max_length(model, :title, 12, { message: '...' }) }
+it { model.must_validate_max_length_of(:title, 12, { message: '...' }) }
+```
+
+<br>
+
+
+### `assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)`
+alias: `:assert_validates_min_length_of`
+
+Test for validating the minimum length of a model's attribute.
+
+```ruby
+it { assert_validates_min_length(model, :title, 12, { message: '...' }) }
+it { model.must_validate_min_length_of(:title, 12, { message: '...' }) }
+```
+
+<br>
+
+
+## `assert_validates_format(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_format_of`
+
+Test for validating the format of a model's attribute with a regexp.
+
+```ruby
+it { assert_validates_format(model, :title, 12, { with: /[a-z+]/ }) }
+it { model.must_validate_format_of(:title, 12, { with: /[a-z]+/ }) }
+```
+
+<br>
+
+
+### `assert_validates_inclusion(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_inclusion_of`
+
+Test for validating that a model's attribute is within a specified range or set of values.
+
+```ruby
+it { assert_validates_inclusion(model, :status, { in: [:a, :b, :c] }) }
+it { model.must_validate_inclusion_of(:status, { in: [:a, :b, :c] }) }
+```
+
+<br>
+
+
+### `assert_validates_integer(obj, attribute, opts = {}, msg = nil)`
+alias: none
+
+Test for validating that a a model's attribute is an integer.
+
+```ruby
+it { assert_validates_integer(model, :author_id, { message: '...' }) }
+it { model.must_validate_integer_of(:author_id, { message: '...' }) }
+```
+
+<br>
+
+
+### `assert_validates_numericality(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_numericality_of`
+
+Test for validating that a model's attribute is numeric (number).
+
+```ruby
+it { assert_validates_numericality(model, :author_id, { message: '...' }) }
+it { model.must_validate_numericality_of(:author_id, { message: '...' }) }
+```
+
+<br>
+
+
+### `assert_validates_uniqueness(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_uniqueness_of`
+
+Test for validating that a model's attribute is unique.
+
+```ruby
+it { assert_validates_uniqueness(model, :urlslug, { message: '...' }) }
+it { model.must_validate_uniqueness_of(:urlslug, { message: '...' }) }
+``` 
+
+<br>
+
+
+### `assert_validates_acceptance(obj, attribute, opts = {}, msg = nil)`
+alias: `assert_validates_acceptance_of`
+
+Test for validating the acceptance of a model's attribute.
+
+```ruby
+it { assert_validates_acceptance(Order.new, :toc, { message: '...' }) }
+it { model.must_validate_acceptance_of(:toc, { message: '...' }) }
+```
+
+<br>
+
+
+### `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
+alias: `:assert_validates_confirmation_of`
+
+Test for validating the confirmation of a model's attribute.
+
+```ruby
+it { assert_validates_confirmation(User.new, :password, { message: '...' }) }
+it { User.new.must_validate_confirmation_of(:password, { message: '...' }) }
+```
+
+<br>
+
 
 Each validation assertion have a responding negative test, ie: `refute_validate_presence()`
 
