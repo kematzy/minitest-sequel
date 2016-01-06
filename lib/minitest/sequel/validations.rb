@@ -161,7 +161,7 @@ module Minitest::Assertions
   end
   alias_method :assert_validates_confirmation_of, :assert_validates_confirmation
   
-  # 
+  # Base test for validations of a model, used mainly as a shortcut for other assertions
   def assert_validates(obj, validation_type, attribute, opts = {}, msg = nil, &blk) 
     msg = msg.nil? ? '' : "#{msg}\n"
     err_msg  = []
@@ -381,7 +381,7 @@ module Minitest::Assertions
   end
   alias_method :refute_validates_confirmation_of, :refute_validates_confirmation
   
-  # 
+  # Base test for validations of a model, used mainly as a shortcut for other assertions
   def refute_validates(obj, validation_type, attribute, opts = {}, msg = nil, &blk)
     msg = msg.nil? ? '' : "#{msg}\n"
     err_msg  = []
@@ -411,6 +411,7 @@ module Minitest::Assertions
     assert_raises(::Sequel::ValidationFailed) { obj.save }
   end
   alias_method :assert_fails_validation, :assert_raises_validation_failed
+  
   
   private
   
