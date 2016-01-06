@@ -7,7 +7,18 @@ require 'sequel/extensions/inflector' unless ''.respond_to?(:classify)
 module Minitest::Assertions
   
   
+  private
   
+  # handles converting `:nil`, `:false` values  
+  def _convert_value(val)
+    v = case val
+        when :nil    then nil
+        when :false  then false
+        when :true   then true
+        else
+          val
+        end
+    v
   end
   
 end
