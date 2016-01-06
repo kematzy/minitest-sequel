@@ -17,7 +17,7 @@ Please help out with missing features / functionality.
 
 Conveniently test your Model definitions as follows:
 
-````ruby
+```ruby
 let(:m) { Post.first }
 
 it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false) }
@@ -31,7 +31,7 @@ assert_have_column(
   <options>, 
   <custom_error_message>
 )
-````
+```
 
 The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options. 
 
@@ -50,11 +50,11 @@ The following options are valid and checked:
 In the event the specs differ from the actual database implementation an extensive error message with the 
 differing option(s) is provided to help speed up debugging the issue:
 
-````
+```
 Expected Post model to have column: :title with: \
   { type: 'string', db_type: 'varchar(250)', allow_null: 'false' } \
   but found: { db_type: 'varchar(255)' }
-````
+```
 
 **Please NOTE!**
 
@@ -94,15 +94,15 @@ Conveniently test model associations quickly and easily with these Minitest asse
 A model defined with an association like this:
 
 
-````ruby
+```ruby
 class Post < Sequel::Model
   one_to_one :first_comment, class: :Comment, order: :id
 end
-````
+```
 
 Can be easily and quickly tested with `assert_association_one_to_one()` like this:
 
-````ruby
+```ruby
 let(:m) { Post.first }
     
 it { assert_association_one_to_one(m, :first_comment)
@@ -117,11 +117,11 @@ assert_association_one_to_one(
   <options>,
   <custom_error_message>
 )
-````
+```
 
 In the event of errors an extensive error message is provided:
 
-````
+```
  # example error message
     
 Expected Author to have a :one_to_one association :key_posts but no association \
@@ -129,7 +129,7 @@ Expected Author to have a :one_to_one association :key_posts but no association 
   {:attribute=>:posts, :type=>:one_to_many, :class=>:Post, :keys=>[:author_id]}, \
   {:attribute=>:key_post, :type=>:one_to_one, :class=>:Post, :keys=>[:author_id]} \
  ]
-````
+```
 
 <br>
 <br>
@@ -138,21 +138,21 @@ Expected Author to have a :one_to_one association :key_posts but no association 
 
 A model defined with an association like this:
 
-````ruby
+```ruby
 class Post < Sequel::Model
   one_to_many :comments
 end
-````
+```
 
 Can be easily and quickly tested with `assert_association_one_to_many()` like this:
 
-````ruby
+```ruby
 let(:p) { Post.first }
   
 it { assert_association_one_to_many(p, :comments) }
  # or
 it { m.must_have_one_to_many_association(:comments) }
-````    
+```    
 
 As above the assertion provides an extensive error message if something is wrong.
 
@@ -163,21 +163,21 @@ As above the assertion provides an extensive error message if something is wrong
 
 A model defined with an association like this:
 
-````ruby
+```ruby
 class Post < Sequel::Model
   many_to_one :author
 end
-````
+```
 
 Can be easily and quickly tested with `assert_association_many_to_one()` like this:
 
-````ruby
+```ruby
 let(:p) { Post.first }
   
 it { assert_association_many_to_one(p, :author) }
  # or
 it { m.must_have_many_to_one_association(:author) }
-````    
+```    
 
 
 As above the assertion provides an extensive error message if something is wrong.
@@ -189,39 +189,39 @@ As above the assertion provides an extensive error message if something is wrong
 
 A model defined with an association like this:
 
-````ruby
+```ruby
 class Post < Sequel::Model
   many_to_many :categories
 end
-````
+```
 
 Can be easily and quickly tested with `assert_association_many_to_many()` like this:
 
-````ruby
+```ruby
 let(:p) { Post.first }
  
 it { assert_association_many_to_many(p, :categories) }
  # or
 it { m.must_have_many_to_many_association(:categories) }
-````    
+```    
 
 If something is wrong an extensive error message is provided:
 
-````
+```
 Expected Category to have a :many_to_many association :posts with given options: \
   {:class_name=>'Posts'} but should be {:class_name=>'Post' }
-````
+```
   
 or
   
-````
+```
 Expected Category to have a :many_to_many association :post but no association \
  ':post' was found - available associations are: [ \
   { :attribute=>:posts, :type=>:many_to_many, :class=>:Post, :join_table=>:categories_posts, \
     :left_keys=>[:category_id], :right_keys=>[:post_id]
   } 
  ]
-````
+```
 
 <br>
 <br>
@@ -231,7 +231,7 @@ spec: `.must_have_association()`
 
 if the above assertion methods are insufficient, you can use the base `assert_association` method instead.
 
-````ruby
+```ruby
 it "should have a :one_through_one association" do
   assert_association(Post, :one_through_one, :author)
    # or
@@ -246,7 +246,7 @@ assert_association(
   <options>, 
   <custom_error_message>
 )
-````
+```
 
 <br>
 <br>
@@ -257,48 +257,196 @@ assert_association(
 
 ## Validations
 
-**NOTE! NOT YET IMPLEMENTED! WORK IN PROGRESS**
+If you are using the recommended `:validation_class_methods` plugin in your app, the following instance validation methods are supported:
+
+ * `assert_validates_presence()`
+ 
+ * `assert_validates_exact_length()`
+ 
+ * `assert_validates_length_range()`
+ 
+ * `assert_validates_max_length()`
+ 
+ * `assert_validates_min_length()`
+ 
+ * `assert_validates_format()`
+ 
+ * `assert_validates_inclusion()`
+ 
+ * `assert_validates_integer()`
+ 
+ * `assert_validates_numericality()`
+ 
+ * `assert_validates_uniqueness()`
+
+ * `assert_validates_acceptance()`
+ 
+ * `assert_validates_confirmation()`
+
+With all valid options checked
+ 
+
+* `assert_validates_presence(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_presence_of`
+    
+    Test for validating presence of a model attribute
+    
+    ```ruby
+    it { assert_validates_presence(model, :title) }
+    it { model.must_validate_presence_of(:title, { message: '...' }) }
+    ```
+
+* `assert_validates_length(obj, attribute, opts = {}, msg = nil)`
+    alias `:assert_validates_length_of`
+    
+    Test for validating the length of a model's attribute.
+    
+    Available options:
+    
+     * :message - The message to use (no default, overrides :nil_message, :too_long, :too_short, and :wrong_length options if present)
+     * :nil_message - The message to use use if :maximum option is used and the value is nil (default: 'is not present')
+     
+     * :too_long - The message to use use if it the value is too long (default: 'is too long')
+     
+     * :too_short - The message to use use if it the value is too short (default: 'is too short')
+     
+     * :wrong_length - The message to use use if it the value is not valid (default: 'is the wrong length')
+     
+     Size related options:
+     
+     * :is - The exact size required for the value to be valid (no default)
+     
+     * :minimum - The minimum size allowed for the value (no default)
+     
+     * :maximum - The maximum size allowed for the value (no default)
+     
+     * :within - The array/range that must include the size of the value for it to be valid (no default)
+     
+    ```ruby
+    it { assert_validates_length(model, :title, { maximum: 12 }) }
+    it { model.must_validate_length_of(:title, { within: 4..12 }) }
+    ```
+    
+* `assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)`
+    alias: `:assert_validates_exact_length_of`
+    
+    Test for validating the exact length of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_exact_length(model, :title, 12, { message: '...' }) }
+    it { model.must_validate_exact_length_of(:title, 12, { message: '...' }) }
+    ```
+
+* `assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)`
+    alias: `:assert_validates_length_range_of`
+    
+    Test for validating the exact length of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_length_range(model, :title, 4..12, { message: '...' }) }
+    it { model.must_validate_length_range_of(:title, 4..12, { message: '...' }) }
+    ```
+
+* `assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)`
+    alias: `:assert_validates_max_length_of`
+    
+    Test for validating the maximum length of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_max_length(model, :title, 12, { message: '...' }) }
+    it { model.must_validate_max_length_of(:title, 12, { message: '...' }) }
+    ```
+
+* `assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)`
+    alias: `:assert_validates_min_length_of`
+    
+    Test for validating the minimum length of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_min_length(model, :title, 12, { message: '...' }) }
+    it { model.must_validate_min_length_of(:title, 12, { message: '...' }) }
+    ```
+    
+* `assert_validates_format(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_format_of`
+    
+    Test for validating the format of a model's attribute with a regexp.
+    
+    ```ruby
+    it { assert_validates_format(model, :title, 12, { with: /[a-z+]/ }) }
+    it { model.must_validate_format_of(:title, 12, { with: /[a-z]+/ }) }
+    ```
+    
+* `assert_validates_inclusion(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_inclusion_of`
+    
+    Test for validating that a model's attribute is within a specified range or set of values.
+    
+    ```ruby
+    it { assert_validates_inclusion(model, :status, { in: [:a, :b, :c] }) }
+    it { model.must_validate_inclusion_of(:status, { in: [:a, :b, :c] }) }
+    ```
+
+* `assert_validates_integer(obj, attribute, opts = {}, msg = nil)`
+    alias: none
+    
+    Test for validating that a a model's attribute is an integer.
+    
+    ```ruby
+    it { assert_validates_integer(model, :author_id, { message: '...' }) }
+    it { model.must_validate_integer_of(:author_id, { message: '...' }) }
+    ```
+    
+* `assert_validates_numericality(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_numericality_of`
+    
+    Test for validating that a model's attribute is numeric (number).
+    
+    ```ruby
+    it { assert_validates_numericality(model, :author_id, { message: '...' }) }
+    it { model.must_validate_numericality_of(:author_id, { message: '...' }) }
+    ```
+    
+* `assert_validates_uniqueness(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_uniqueness_of`
+    
+    Test for validating that a model's attribute is unique.
+    
+    ```ruby
+    it { assert_validates_uniqueness(model, :urlslug, { message: '...' }) }
+    it { model.must_validate_uniqueness_of(:urlslug, { message: '...' }) }
+    ``` 
+
+* `assert_validates_acceptance(obj, attribute, opts = {}, msg = nil)`
+    alias: `assert_validates_acceptance_of`
+    
+    Test for validating the acceptance of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_acceptance(Order.new, :toc, { message: '...' }) }
+    it { model.must_validate_acceptance_of(:toc, { message: '...' }) }
+    ```
+
+* `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
+    alias: `:assert_validates_confirmation_of`
+    
+    Test for validating the confirmation of a model's attribute.
+    
+    ```ruby
+    it { assert_validates_confirmation(User.new, :password, { message: '...' }) }
+    it { User.new.must_validate_confirmation_of(:password, { message: '...' }) }
+    ```
+
+Each validation assertion have a responding negative test, ie: `refute_validate_presence()`
 
 
-If you are using the recommended `:validation_helpers` plugin in your app, the following instance validation methods 
-are supported:
-
- * `validates_presence`
- 
- * `validates_exact_length`
- 
- * `validates_length_range`
- 
- * `validates_max_length`
- 
- * `validates_min_length`
- 
- * `validates_format`
- 
- * `validates_includes`
- 
- * `validates_integer`
- 
- * `validates_not_string`
- 
- * `validates_numeric`
- 
- * `validates_unique`
-
-
-The following valid options will be checked:
-
- * `:allow_blank`
- * `:allow_missing`
- * `:allow_nil`
- * `:message`
 
 
 ### Usage
 
 A model defined with validations like this:
 
-````ruby
+```ruby
 class Post < Sequel::Model
   plugin :validation_helpers
   
@@ -308,11 +456,11 @@ class Post < Sequel::Model
     validates_format(/\w+/, :title)
   end
 end
-````
+```
 
 Can be quickly tested like this:
 
-````ruby
+```ruby
  # <snip...>
     
 let(:m) { Post.first }
@@ -324,35 +472,35 @@ end
 it "shoud validate format of :title column with regexp" do
   assert_validates_format(m, :title, /\w+/)
 end
-````
+```
 
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-````ruby
+```ruby
 gem 'minitest-sequel'
-````
+```
 
 And then execute:
 
-````bash
+```bash
 $ bundle
-````
+```
 
 Or install it yourself as:
 
-````bash
+```bash
 $ gem install minitest-sequel
-````
+```
 
 ## Usage
 
 In your project's `spec/spec_helper.rb` or `test/test_helper.rb` file ensure the following code is present:
 
  
-````ruby   
+```ruby   
 gem 'minitest'
     
 require 'minitest/autorun'
@@ -374,7 +522,7 @@ DB.create_table(:posts) do
 end
     
  # <snip...>
-````
+```
 
 Then in your tests you should be good to go when using the sequel assertions.
 
