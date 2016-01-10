@@ -13,10 +13,6 @@ require 'minitest/assert_errors'
 require 'minitest/rg'
 
 
-# Auto-manage created_at/updated_at fields
-Sequel::Model.plugin(:timestamps)
-# The preferred default validations plugin, which uses instance-level methods.
-Sequel::Model.plugin(:validation_helpers)
 
 DB = Sequel.sqlite # :memory
 
