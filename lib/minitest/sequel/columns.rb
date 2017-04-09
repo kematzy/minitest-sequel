@@ -143,8 +143,8 @@ module Minitest::Assertions
     msg = msg.nil? ? '' : "#{msg}\n"
     msg << "Expected #{obj.class} model to NOT have column: :#{attribute}"
     # check if column exists
-    col = obj.db.schema(obj.class.table_name).detect { |col| col[0] == attribute }
-    matching = col.nil?
+    dcol = obj.db.schema(obj.class.table_name).detect { |col| col[0] == attribute }
+    matching = dcol.nil?
     unless matching
       msg << ' but such a column was found' 
       assert(matching, msg)
