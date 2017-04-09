@@ -413,6 +413,18 @@ module Minitest::Assertions
   alias_method :assert_fails_validation, :assert_raises_validation_failed
   
   
+  # #
+  # #
+  # def assert_presence(obj, attr, value)
+  #   obj.send("#{attr}=", value)
+  #   assert(obj.valid?)
+  # end
+  #
+  # [nil, '', ' '].each { |x|  }
+  #
+  # end
+  
+  
   private
   
   
