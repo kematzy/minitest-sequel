@@ -26,3 +26,4 @@ end
 require "minitest/sequel/columns"
 require "minitest/sequel/associations"
 require "minitest/sequel/validations"
+require "minitest/sequel/plugins"

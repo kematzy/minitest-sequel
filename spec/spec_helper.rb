@@ -31,6 +31,30 @@ DB.create_table(:posts) do
   column :updated_at,   :timestamp
 end
 
+DB.create_table(:created_posts) do
+  primary_key  :id
+  column :category_id,  :integer, default: 1
+  column :title,        "varchar(255)"
+  column :body,         :text
+  column :author_id,    :integer
+  column :urlslug,      :string
+
+  # column :created_at,   :timestamp
+  column :updated_at,   :timestamp
+end
+
+DB.create_table(:updated_posts) do
+  primary_key  :id
+  column :category_id,  :integer, default: 1
+  column :title,        "varchar(255)"
+  column :body,         :text
+  column :author_id,    :integer
+  column :urlslug,      :string
+
+  column :created_at,   :timestamp
+  # column :updated_at,   :timestamp
+end
+
 DB.create_table(:categories) do
   primary_key  :id
   column :name,         :text
@@ -66,6 +90,8 @@ end
 
 
 class Post < Sequel::Model; end
+class CreatedPost < Sequel::Model; end
+class UpdatedPost < Sequel::Model; end
 
 class Comment < Sequel::Model; end
 
