@@ -24,13 +24,13 @@ it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow
 
 it { m.must_have_column(:title, type: :string, allow_null: :false) }
     
- # definition of args
-assert_have_column(
-  <instance>, 
-  <column_name>, 
-  <options>, 
-  <custom_error_message>
-)
+# definition of args
+# assert_have_column(
+#   <instance>, 
+#   <column_name>, 
+#   <options>, 
+#   <custom_error_message>
+# )
 ```
 
 The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options. 
