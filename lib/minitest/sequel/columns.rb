@@ -46,9 +46,9 @@ module Minitest::Assertions
     err_msg  = []
     conf_msg = []
     # check if column exists
-    col = obj.db.schema(obj.class.table_name).detect { |c| c[0] == attribute }
-    matching = !col.nil?
-    
+    dcol = obj.db.schema(obj.class.table_name).detect { |c| c[0] == attribute }
+    matching = !dcol.nil?
+
     # bail out if no matching column
     unless matching
       msg << " but no such column exists"
@@ -68,28 +68,28 @@ module Minitest::Assertions
     # TODO: simplify this mess. quick fix didn't work, so look at it again when time permits.
 
     unless opts[:type].nil?
-      expected = (col[1][:type].to_s == opts[:type].to_s)
+      expected = (dcol[1][:type].to_s == opts[:type].to_s)
       conf_msg << "type: '#{opts[:type]}'"
       unless expected
-        err_msg << "type: '#{col[1][:type]}'"
+        err_msg << "type: '#{dcol[1][:type]}'"
       end
       matching &&= expected
     end
 
     unless opts[:db_type].nil?
-      expected = (col[1][:db_type].to_s == opts[:db_type].to_s)
+      expected = (dcol[1][:db_type].to_s == opts[:db_type].to_s)
       conf_msg << "db_type: '#{opts[:db_type]}'"
       unless expected
-        err_msg << "db_type: '#{col[1][:db_type]}'"
+        err_msg << "db_type: '#{dcol[1][:db_type]}'"
       end
       matching &&= expected
     end
 
     unless opts[:max_length].nil?
-      expected = (col[1][:max_length] === opts[:max_length])
+      expected = (dcol[1][:max_length] === opts[:max_length])
       conf_msg << "max_length: '#{opts[:max_length]}'"
       unless expected
-        err_msg << "max_length: '#{col[1][:max_length]}'"
+        err_msg << "max_length: '#{dcol[1][:max_length]}'"
       end
       matching &&= expected
     end
@@ -99,37 +99,37 @@ module Minitest::Assertions
       expected = (opts[:allow_null] === v)
       conf_msg << "allow_null: '#{opts[:allow_null]}'"
       unless expected
-        err_msg << "allow_null: '#{col[1][:allow_null]}'"
+        err_msg << "allow_null: '#{dcol[1][:allow_null]}'"
       end
       matching &&= expected
     end
 
     unless opts[:default].nil?
       v = _convert_value(opts[:default])
-      expected = (col[1][:default] === v)
+      expected = (dcol[1][:default] === v)
       conf_msg << "default: '#{opts[:default]}'"
       unless expected
-        err_msg << "default: '#{col[1][:default].inspect}'"
+        err_msg << "default: '#{dcol[1][:default].inspect}'"
       end
       matching &&= expected
     end
 
     unless opts[:primary_key].nil?
       v = _convert_value(opts[:primary_key])
-      expected = (col[1][:primary_key] === v)
+      expected = (dcol[1][:primary_key] === v)
       conf_msg << "primary_key: '#{opts[:primary_key]}'"
       unless expected
-        err_msg << "primary_key: '#{col[1][:primary_key]}'"
+        err_msg << "primary_key: '#{dcol[1][:primary_key]}'"
       end
       matching &&= expected
     end
 
     unless opts[:auto_increment].nil?
       v = _convert_value(opts[:auto_increment])
-      expected = (col[1][:auto_increment] === v)
+      expected = (dcol[1][:auto_increment] === v)
       conf_msg << "auto_increment: '#{opts[:auto_increment]}'"
       unless expected
-        err_msg << "auto_increment: '#{col[1][:auto_increment]}'"
+        err_msg << "auto_increment: '#{dcol[1][:auto_increment]}'"
       end
       matching &&= expected
     end
@@ -140,13 +140,13 @@ module Minitest::Assertions
 
   #
   def refute_have_column(obj, attribute, opts = {}, msg = nil)
-    msg = msg.nil? ? '' : "#{msg}\n"
+    msg = msg.nil? ? "" : "#{msg}\n"
     msg << "Expected #{obj.class} model to NOT have column: :#{attribute}"
     # check if column exists
     dcol = obj.db.schema(obj.class.table_name).detect { |col| col[0] == attribute }
     matching = dcol.nil?
     unless matching
-      msg << ' but such a column was found' 
+      msg << " but such a column was found"
       assert(matching, msg)
     end
   end
