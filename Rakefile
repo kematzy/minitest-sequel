@@ -1,11 +1,12 @@
 OSX = RUBY_PLATFORM.match(/darwin/)
 
-require 'bundler/gem_tasks'
-require 'rake/testtask'
+require "bundler/gem_tasks"
+require "rake/testtask"
 
 Rake::TestTask.new(:spec) do |t|
-  t.libs << 'spec'
-  t.libs << 'lib'
+  ENV["TESTOPTS"] = "--color --documentation"
+  t.libs << "spec"
+  t.libs << "lib"
   t.test_files = FileList['spec/**/*_spec.rb']
 end
 
@@ -14,13 +15,13 @@ task :test => :spec
 
 desc "Run specs with coverage"
 task :coverage do
-  ENV['COVERAGE'] = '1'
-  Rake::Task['spec'].invoke
+  ENV["COVERAGE"] = "1"
+  Rake::Task["spec"].invoke
   `open coverage/index.html` if OSX
 end
 
 
-desc 'Run Rubocop report'
+desc "Run Rubocop report"
 task :rubocop do
   res = `which rubocop`
   if res != ""

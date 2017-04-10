@@ -1,8 +1,8 @@
-require 'minitest/sequel'
+# require "minitest/sequel"
 
 # reopening to add schema validation functionality
 module Minitest::Assertions
-  
+
   # Conveniently test your Model definitions as follows:
   #
   #     let(:m) { Post.first }
@@ -11,11 +11,11 @@ module Minitest::Assertions
   #     it { m.must_have_column(:title, type: :string, db_type: 'varchar(250)') }
   #
   #     # assert_have_column(<instance>, <column_name>, <options>, <custom_error_message>)
-  #     
+  #
   #     # <instance>.must_have_column(<column_name>, <options>, <custom_error_message>)
   #
   #
-  # `assert_have_column()` first tests if the column name is defined in the Model and then checks 
+  # `assert_have_column()` first tests if the column name is defined in the Model and then checks
   # all passed options. The following options are valid and checked:
   #
   #  * :type
@@ -26,7 +26,7 @@ module Minitest::Assertions
   #  * :primary_key
   #  * :auto_increment
   #
-  # In the event the specs differ from the actual database implementation an extensive error 
+  # In the event the specs differ from the actual database implementation an extensive error
   # message with the differing option(s) is provided to help speed up debugging the issue:
   #
   #     Expected Post model to have column: :title with: \
@@ -36,7 +36,7 @@ module Minitest::Assertions
   #
   # **Please NOTE!**
   #
-  # To test options with a value that is either `nil`, `true` or `false`, please use `:nil`, 
+  # To test options with a value that is either `nil`, `true` or `false`, please use `:nil`,
   # `:false` or `:true` and provide numbers as 'strings' instead.
   #
   #
@@ -51,22 +51,22 @@ module Minitest::Assertions
     
     # bail out if no matching column
     unless matching
-      msg << ' but no such column exists' 
+      msg << " but no such column exists"
       assert(false, msg)
     end
-    
+
     # bail out if options provided are invalid
     val_opts = [:type, :db_type, :allow_null, :max_length, :default, :primary_key, :auto_increment]
     invalid_opts  = opts.keys.reject { |o| val_opts.include?(o) }
     unless invalid_opts.empty?
-      msg << ', but the following invalid option(s) was found: { '
+      msg << ", but the following invalid option(s) was found: { "
       invalid_opts.each { |o| msg << "#{o.inspect}; " }
       msg << " }. Valid options are: #{val_opts.inspect}"
       assert(false, msg)
     end
-    
+
     # TODO: simplify this mess. quick fix didn't work, so look at it again when time permits.
-    
+
     unless opts[:type].nil?
       expected = (col[1][:type].to_s == opts[:type].to_s)
       conf_msg << "type: '#{opts[:type]}'"
@@ -75,7 +75,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:db_type].nil?
       expected = (col[1][:db_type].to_s == opts[:db_type].to_s)
       conf_msg << "db_type: '#{opts[:db_type]}'"
@@ -84,7 +84,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:max_length].nil?
       expected = (col[1][:max_length] === opts[:max_length])
       conf_msg << "max_length: '#{opts[:max_length]}'"
@@ -93,7 +93,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:allow_null].nil?
       v = _convert_value(opts[:allow_null])
       expected = (opts[:allow_null] === v)
@@ -103,7 +103,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:default].nil?
       v = _convert_value(opts[:default])
       expected = (col[1][:default] === v)
@@ -113,7 +113,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:primary_key].nil?
       v = _convert_value(opts[:primary_key])
       expected = (col[1][:primary_key] === v)
@@ -123,7 +123,7 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     unless opts[:auto_increment].nil?
       v = _convert_value(opts[:auto_increment])
       expected = (col[1][:auto_increment] === v)
@@ -133,11 +133,11 @@ module Minitest::Assertions
       end
       matching &&= expected
     end
-    
+
     msg = msg << " with: { #{conf_msg.join(', ')} } but found: { #{err_msg.join(', ')} }"
     assert(matching, msg)
   end
-  
+
   #
   def refute_have_column(obj, attribute, opts = {}, msg = nil)
     msg = msg.nil? ? '' : "#{msg}\n"
@@ -150,7 +150,7 @@ module Minitest::Assertions
       assert(matching, msg)
     end
   end
-  
+
 end
 
 
