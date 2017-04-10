@@ -4,13 +4,15 @@ if ENV["COVERAGE"]
   SimpleCov.minitest_sequel_coverage
 end
 
-require 'minitest/rg'
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "rubygems"
 require "sqlite3"
 require "minitest/autorun"
 require "minitest/sequel"
 require "minitest/assert_errors"
+# require "minitest/rg"
+# require "minitest/color"
+# require "minitest/documentation"
 
 
 

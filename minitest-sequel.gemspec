@@ -27,7 +27,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency 'minitest-rg'
   spec.add_runtime_dependency "minitest", "~> 5.7", ">= 5.7.0"
   spec.add_runtime_dependency "sequel", "~> 4.26"
 
@@ -36,6 +35,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "minitest-assert_errors"
   spec.add_development_dependency "minitest-hooks"
+  spec.add_development_dependency "minitest-color"
+  spec.add_development_dependency "minitest-documentation"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "rubocop"
 end
