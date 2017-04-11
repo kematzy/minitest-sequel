@@ -512,6 +512,72 @@ it "shoud validate format of :title column with regexp" do
 end
 ```
 
+<br>
+<br>
+
+----
+
+<br>
+
+## Plugins
+
+This gem also contains a collection of "helpers" that aid working with Sequel models:
+
+
+#### `assert_timestamped_model(model, opts = {}, msg = nil)`
+
+Quickly test if a model class is timestamped with .plugin(:timestamps)
+
+
+```ruby
+ # Declared locally in the Model
+ class Comment < Sequel::Model
+   plugin(:timestamps)
+ end
+ proc { assert_timestamped_model(Comment) }.wont_have_error
+
+ # on a non-timestamped model
+ class Post < Sequel::Model; end
+ proc { assert_timestamped_model(Post) }.must_have_error(/Not a \.plugin\(:timestamps\) model, available plugins are/)
+```
+
+**NOTE!**
+
+You can also pass attributes to the created model in the tests via the `opts` hash like this:
+
+```ruby
+proc { assert_timestamped_model(Comment, {body: "I think...", email: "e@email.com"}) }.wont_have_error
+```
+   
+Timestamps can be declared globally for all models via `Sequel::Model.plugin(:timestamps)` before the models are migrated.
+
+
+#### `assert_timestamped_model_instance(model, opts = {}, msg = nil)`
+
+Test if a model instance is timestamped via .plugin(:timestamps)
+
+```ruby
+let(:m) { Post.create(title: "Dummy") }
+proc { assert_timestamped_model_instance(m) }.wont_have_error
+```
+
+
+
+You can also test if an updated record is correctly timestamped
+
+```ruby
+m.title = "Updated"
+m.save
+proc { assert_timestamped_model_instance(m, updated_record: true) }.wont_have_error
+```
+
+Or alternatively test if an updated record is wrongly timestamped
+
+```ruby
+let(:m) { Post.create(title: "Dummy", updated_at: Time.now) }
+proc { assert_timestamped_model_instance(m, updated_record: false) }.must_have_error(/expected #.updated_at to be NIL on new record/)
+```
+
 
 ## Installation
 

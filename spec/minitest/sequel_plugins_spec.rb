@@ -1,42 +1,34 @@
-require_relative '../spec_helper'
+require_relative "../spec_helper"
 
 describe Minitest::Spec do
 
-  describe 'a .plugin(:timestamps) model' do
+  describe "a .plugin(:timestamps) model" do
 
-    # it 'should return....' do
-    #   c = Class.new(::Post)
-    #   # c.instance_variable_get('@plugins').must_equal 'debug'
-    #   c.plugin(:timestamps)
-    #   # c.instance_variable_get('@plugins').must_equal 'debug'
-    #   c.instance_variable_get('@plugins').must_include(Sequel::Plugins::Timestamps)
-    # end
-
-    it 'should raise no error' do
+    it "should raise no error" do
       c = Class.new(::Post)
       c.plugin(:timestamps)
-      proc { assert_timestamped_model(c, {title: 'Dummy'}) }.wont_have_error
+      proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
     end
 
-    describe '#:created_at' do
+    describe "#:created_at" do
 
       it "should raise no error when the :created_at column is present" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        proc { assert_timestamped_model(c, {title: 'Dummy'}) }.wont_have_error
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
       end
 
       it "should raise an error when the :created_at column is missing" do
         c = Class.new(::CreatedPost)
         c.plugin(:timestamps)
         e = %r{Expected .* model to have column: :created_at but no such column exists}
-        proc { assert_timestamped_model(c, {title: 'Dummy'}) }.must_have_error(e)
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
       end
 
-      it 'should be a timestamp on a new model' do
+      it "should be a timestamp on a new model" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        mi = c.create(title: 'Dummy', created_at: nil)
+        mi = c.create(title: "Dummy", created_at: nil)
         proc { assert_timestamped_model_instance(mi) }.wont_have_error
       end
 
@@ -49,57 +41,57 @@ describe Minitest::Spec do
 
     end
 
-    describe '#:updated_at' do
+    describe "#:updated_at" do
 
       it "should raise no error when the :updated_at column is present" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        proc { assert_timestamped_model(c, {title: 'Dummy'}) }.wont_have_error
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
       end
 
       it "should raise an error when the :updated_at column is missing" do
         c = Class.new(::UpdatedPost)
         c.plugin(:timestamps)
         e = %r{Expected .* model to have column: :updated_at but no such column exists}
-        proc { assert_timestamped_model(c, {title: 'Dummy'}) }.must_have_error(e)
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
       end
 
-      it 'should be a nil on a new model' do
+      it "should be a nil on a new model" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        mi = c.create(title: 'Dummy')
-        proc { assert_timestamped_model_instance(mi, :updated => false) }.wont_have_error #must_have_error('updated model')
+        mi = c.create(title: "Dummy")
+        proc { assert_timestamped_model_instance(mi, updated_record: false) }.wont_have_error
       end
 
-      it 'should raise an error if :updated_at is not nil on a new model' do
+      it "should raise an error if :updated_at is not nil on a new model" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        mi = c.create(title: 'Dummy', updated_at: Time.now )
+        mi = c.create(title: "Dummy", updated_at: Time.now )
         proc {
-          assert_timestamped_model_instance(mi, :updated => false )
-        }.must_have_error('should raise :updated_at not nil error')
+          assert_timestamped_model_instance(mi, updated_record: false)
+        }.must_have_error(/AssertTimestampedModelInstance:updated - expected #updated_at to be NIL on new record/)
       end
 
-      it 'should be a timestamp on an updated model' do
+      it "should be a timestamp on an updated model" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
-        mi = c.create(title: 'Dummy')
-        mi.update(title: 'updated')
+        mi = c.create(title: "Dummy")
+        mi.update(title: "updated")
         mi.save
         mi.updated_at.wont_be_nil
-        proc { assert_timestamped_model_instance(mi, :updated => true) }.wont_have_error #must_have_error('updated model')
+        proc { assert_timestamped_model_instance(mi, updated_record: true) }.wont_have_error
       end
 
     end
 
   end
 
-  describe 'a NON .plugin(:timestamps) model' do
+  describe "a NON .plugin(:timestamps) model" do
 
-    it 'should raise an error' do
+    it "should raise an error" do
       c = Class.new(::Post)
-      e = "Not a .plugin(:timestamps) model, available plugins are: [\"Sequel::Model\", \"Sequel::Model::Associations\", \"Sequel::Plugins::ValidationClassMethods\"]"
-      proc { assert_timestamped_model(c, {title: 'Dummy'}) }.must_have_error(e)
+      e = "Not a plugin(:timestamps) model, available plugins are: [\"Sequel::Model\", \"Sequel::Model::Associations\", \"Sequel::Plugins::ValidationClassMethods\"]"
+      proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
     end
 
   end
@@ -142,7 +134,7 @@ describe Minitest::Spec do
   # end
 
 
-  describe 'ClassMethods' do
+  describe "ClassMethods" do
     before do
       @c = Class.new(::Minitest::Spec)
 
@@ -152,7 +144,7 @@ describe Minitest::Spec do
     #   @c.methods.sort.must_equal 'd'
     # end
 
-    it 'should...' do
+    it "should..." do
       # proc { @c.it_must_be_a_timestamped_model(Post) { @m = Post.create } }.must_equal 'd'
       # @c.class_eval { it_must_be_a_timestamped_model(Post) { @m = Post.create } }.must_equal 'd'
     end
