@@ -1,9 +1,9 @@
 # Minitest-Sequel
 
-[Minitest](https://github.com/seattlerb/minitest) assertions to speed-up development and testing of 
+[Minitest](https://github.com/seattlerb/minitest) assertions to speed-up development and testing of
 [Sequel](http://sequel.jeremyevans.net/) database setups.
 
-The general hope is that this gem will contain a variety of useful assertions in all areas of testing Sequel database 
+The general hope is that this gem will contain a variety of useful assertions in all areas of testing Sequel database
 code within your apps, gems, etc.
 
 Please help out with missing features / functionality.
@@ -23,17 +23,19 @@ let(:m) { Post.first }
 it { assert_have_column(m, :title, type: :string, db_type: 'varchar(250)', allow_null: :false) }
 
 it { m.must_have_column(:title, type: :string, allow_null: :false) }
-    
+
+it { m.must_have_column(:title, { type: :string, allow_null: :false }, "Custom messsage goes here") }
+
 # definition of args
 # assert_have_column(
-#   <instance>, 
-#   <column_name>, 
-#   <options>, 
+#   <instance>,
+#   <column_name>,
+#   <options>,
 #   <custom_error_message>
 # )
 ```
 
-The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options. 
+The `assert_have_column()` method first tests if the column name is defined in the Model and then checks all passed options.
 
 
 The following options are valid and checked:
@@ -47,7 +49,7 @@ The following options are valid and checked:
  * `:auto_increment`
 
 
-In the event the specs differ from the actual database implementation an extensive error message with the 
+In the event the specs differ from the actual database implementation an extensive error message with the
 differing option(s) is provided to help speed up debugging the issue:
 
 ```
@@ -58,7 +60,7 @@ Expected Post model to have column: :title with: \
 
 **Please NOTE!**
 
-To test options with a value that is either `nil`, `true` or `false`, please use `:nil`, `:false` or `:true` and provide 
+To test options with a value that is either `nil`, `true` or `false`, please use `:nil`, `:false` or `:true` and provide
 numbers as 'strings' instead, ie: `'1'` instead of `1`.
 
 
@@ -70,7 +72,7 @@ numbers as 'strings' instead, ie: `'1'` instead of `1`.
 <br>
 
 
-## Associations 
+## Associations
 
 Conveniently test model associations quickly and easily with these Minitest assertions:
 
@@ -104,15 +106,15 @@ Can be easily and quickly tested with `assert_association_one_to_one()` like thi
 
 ```ruby
 let(:m) { Post.first }
-    
+
 it { assert_association_one_to_one(m, :first_comment)
  # or
 it { m.must_have_one_to_one_association(:first_comment) }
-    
-    
+
+
  # definition of args
-assert_association_one_to_one( 
-  <model_instance>, 
+assert_association_one_to_one(
+  <model_instance>,
   <association_name>,   # ie: :first_comment
   <options>,
   <custom_error_message>
@@ -123,7 +125,7 @@ In the event of errors an extensive error message is provided:
 
 ```
  # example error message
-    
+
 Expected Author to have a :one_to_one association :key_posts but no association \
  ':key_posts' was found - available associations are: [ \
   {:attribute=>:posts, :type=>:one_to_many, :class=>:Post, :keys=>[:author_id]}, \
@@ -148,7 +150,7 @@ Can be easily and quickly tested with `assert_association_one_to_many()` like th
 
 ```ruby
 let(:p) { Post.first }
-  
+
 it { assert_association_one_to_many(p, :comments) }
  # or
 it { m.must_have_one_to_many_association(:comments) }
@@ -173,7 +175,7 @@ Can be easily and quickly tested with `assert_association_many_to_one()` like th
 
 ```ruby
 let(:p) { Post.first }
-  
+
 it { assert_association_many_to_one(p, :author) }
  # or
 it { m.must_have_many_to_one_association(:author) }
@@ -199,7 +201,7 @@ Can be easily and quickly tested with `assert_association_many_to_many()` like t
 
 ```ruby
 let(:p) { Post.first }
- 
+
 it { assert_association_many_to_many(p, :categories) }
  # or
 it { m.must_have_many_to_many_association(:categories) }
@@ -211,15 +213,15 @@ If something is wrong an extensive error message is provided:
 Expected Category to have a :many_to_many association :posts with given options: \
   {:class_name=>'Posts'} but should be {:class_name=>'Post' }
 ```
-  
+
 or
-  
+
 ```
 Expected Category to have a :many_to_many association :post but no association \
  ':post' was found - available associations are: [ \
   { :attribute=>:posts, :type=>:many_to_many, :class=>:Post, :join_table=>:categories_posts, \
     :left_keys=>[:category_id], :right_keys=>[:post_id]
-  } 
+  }
  ]
 ```
 
@@ -240,10 +242,10 @@ end
 
  # definition of args
 assert_association(
-  <model_class>, 
-  <association_type>, 
-  <association_name>, 
-  <options>, 
+  <model_class>,
+  <association_type>,
+  <association_name>,
+  <options>,
   <custom_error_message>
 )
 ```
@@ -260,27 +262,27 @@ assert_association(
 If you are using the recommended `:validation_class_methods` plugin in your app, the following instance validation methods are supported:
 
  * `assert_validates_presence()`
- 
+
  * `assert_validates_exact_length()`
- 
+
  * `assert_validates_length_range()`
- 
+
  * `assert_validates_max_length()`
- 
+
  * `assert_validates_min_length()`
- 
+
  * `assert_validates_format()`
- 
+
  * `assert_validates_inclusion()`
- 
+
  * `assert_validates_integer()`
- 
+
  * `assert_validates_numericality()`
- 
+
  * `assert_validates_uniqueness()`
 
  * `assert_validates_acceptance()`
- 
+
  * `assert_validates_confirmation()`
 
 With all valid options checked
@@ -291,7 +293,7 @@ With all valid options checked
 alias: `:assert_validates_presence_of`
 
 Test for validating presence of a model attribute
-    
+
 ```ruby
 it { assert_validates_presence(model, :title) }
 it { model.must_validate_presence_of(:title, { message: '...' }) }
@@ -444,7 +446,7 @@ Test for validating that a model's attribute is unique.
 ```ruby
 it { assert_validates_uniqueness(model, :urlslug, { message: '...' }) }
 it { model.must_validate_uniqueness_of(:urlslug, { message: '...' }) }
-``` 
+```
 
 <br>
 
@@ -478,8 +480,6 @@ it { User.new.must_validate_confirmation_of(:password, { message: '...' }) }
 Each validation assertion have a responding negative test, ie: `refute_validate_presence()`
 
 
-
-
 ### Usage
 
 A model defined with validations like this:
@@ -487,7 +487,7 @@ A model defined with validations like this:
 ```ruby
 class Post < Sequel::Model
   plugin :validation_helpers
-  
+
   def validate
     super
     validates_presence(:title)
@@ -500,14 +500,14 @@ Can be quickly tested like this:
 
 ```ruby
  # <snip...>
-    
+
 let(:m) { Post.first }
-    
-it "shoud validate presence of :title column" do
+
+it "should validate presence of :title column" do
   assert_validates_presence(m, :title)
 end
-    
-it "shoud validate format of :title column with regexp" do
+
+it "should validate format of :title column with regexp" do
   assert_validates_format(m, :title, /\w+/)
 end
 ```
@@ -603,28 +603,28 @@ $ gem install minitest-sequel
 
 In your project's `spec/spec_helper.rb` or `test/test_helper.rb` file ensure the following code is present:
 
- 
+
 ```ruby   
 gem 'minitest'
-    
+
 require 'minitest/autorun'
 require 'minitest/sequel'  # NB!! can be loaded after minitest/autorun
- 
+
 require 'sqlite3' # using sqlite for tests
-    
+
  # The preferred default validations plugin, which uses class-level methods.
 Sequel::Model.plugin(:validation_class_methods)
-    
+
  # connect to database
 DB = Sequel.sqlite # :memory
-    
+
  ## add migrations and seeds below
-    
+
 DB.create_table(:posts) do
   primary_key :id
   # <snip...>
 end
-    
+
  # <snip...>
 ```
 
@@ -634,24 +634,23 @@ Then in your tests you should be good to go when using the sequel assertions.
 
 ## Development
 
-After checking out the repo, run `bundle install` to install all dependencies. Then, run `rake spec` to run the tests. 
+After checking out the repo, run `bundle install` to install all dependencies. Then, run `rake spec` to run the tests.
 
-To install this gem onto your local machine, run `bundle exec rake install`. 
+To install this gem onto your local machine, run `bundle exec rake install`.
 
-To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, 
-which will create a git tag for the version, push git commits and tags, and push the `.gem` file to 
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`,
+which will create a git tag for the version, push git commits and tags, and push the `.gem` file to
 [rubygems.org](https://rubygems.org).
 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kematzy/minitest-sequel/issues. 
+Bug reports and pull requests are welcome on GitHub at https://github.com/kematzy/minitest-sequel/issues.
 
-This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere 
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere
 to the [Contributor Covenant](contributor-covenant.org) code of conduct.
 
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
