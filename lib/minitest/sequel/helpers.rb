@@ -19,44 +19,44 @@ class Minitest::Spec
   # this test depends upon being able to create a new model instance for each test via using
   # Sequel Factory's `#make()` method
   #
-  def self.ensure_working_CRUD(_model, _attr)
+  def self.ensure_working_CRUD(model, attr)
 
     describe "a valid CRUD model" do
 
-      it "can create a #{_model}" do
-        m = _model.send(:make)
-        assert_instance_of(_model, m, "CRUD:create - expected #{m.class} to be an instance of #{_model}")
+      it "can create a #{model}" do
+        m = model.send(:make)
+        assert_instance_of(_model, m, "CRUD:create - expected #{m.class} to be an instance of #{model}")
         assert_empty(m.errors, "CRUD:create - expected .errors to be empty, but was: [#{m.errors.inspect}]")
       end
 
-      it "can read a #{_model}" do
-        m = _model.send(:make)
-        res = _model.send :first
-        assert_instance_of(_model, m, "CRUD:read - expected #{res.class} to be an instance of #{_model}")
+      it "can read a #{model}" do
+        m = model.send(:make)
+        res = model.send :first
+        assert_instance_of(model, m, "CRUD:read - expected #{res.class} to be an instance of #{model}")
         assert_equal(m, res, "CRUD:read - expected [#{m.inspect}] to equal [#{res.inspect}]")
       end
 
-      it "can update a #{_model}" do
-        m   = _model.send(:make)
-        _str = "#{m.send(_attr.to_sym)} Updated"
-        res = _model.send(:first)
+      it "can update a #{model}" do
+        m = model.send(:make)
+        tmp_str = "#{m.send(attr.to_sym)} Updated"
+        res = model.send(:first)
 
         assert_equal(m, res, "CRUD:update - expected [#{m.inspect}] to equal [#{res.inspect}]")
-        res.send("#{_attr}=", _str)
+        res.send("#{attr}=", tmp_str)
         res.save
 
-        res2 = _model.send(:first)
-        assert_equal(_str, res2.send(_attr.to_sym), "CRUD:update - expected [#{res2.send(_attr.to_sym)}] to equal the updated string: [#{_str}]")
+        res2 = model.send(:first)
+        assert_equal(tmp_str, res2.send(attr.to_sym), "CRUD:update - expected [#{res2.send(attr.to_sym)}] to equal the updated string: [#{tmp_str}]")
       end
 
-      it "can destroy a #{_model}" do
-        m = _model.send(:make)
+      it "can destroy a #{model}" do
+        m = model.send(:make)
         if m.respond_to?(:deleted_at)
           assert_nil(m.deleted_at, "CRUD:delete - expected m.deleted_at to be nil, but was [#{m.deleted_at}]")
         end
         assert(m.destroy, "CRUD:delete - expected m.destroy to return true")
-        res = _model.send(:first)
-        assert_nil(res, "CRUD:delete - expected #{_model}.first to return nil, but was: [#{res.inspect}]")
+        res = model.send(:first)
+        assert_nil(res, "CRUD:delete - expected #{model}.first to return nil, but was: [#{res.inspect}]")
         if m.respond_to?(:deleted_at)
           refute_nil(m.deleted_at, "CRUD:delete - expected m.deleted_at to be NOT be nil")
           assert_instance_of(Time, m.deleted_at, "CRUD:delete - expected m.deleted_at to be an instance of Time")
@@ -65,6 +65,5 @@ class Minitest::Spec
 
     end
   end
-
 
 end

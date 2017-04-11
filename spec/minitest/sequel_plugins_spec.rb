@@ -203,13 +203,13 @@ describe Minitest::Spec do
     
     it "should NOT raise an error on a NON :paranoid model" do
       c = Class.new(::Author)
-      proc { c.wont_be_paranoid_model({name: "Paranoid"}) }.wont_have_error
+      proc { c.wont_be_paranoid_model() }.wont_have_error
     end
     
     it "should raise an error on a :paranoid model" do
       c = Class.new(::Author)
       c.plugin(:paranoid)
-      proc { c.wont_be_a_paranoid_model({name: "Paranoid"}) }.must_have_error(/to NOT be a :paranoid model, but it was/)
+      proc { c.wont_be_a_paranoid_model() }.must_have_error(/to NOT be a :paranoid model, but it was/)
     end
     
   end

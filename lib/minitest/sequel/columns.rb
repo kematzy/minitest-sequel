@@ -41,7 +41,7 @@ module Minitest::Assertions
   #
   #
   def assert_have_column(obj, attribute, opts = {}, msg = nil)
-    msg = msg.nil? ? '' : "#{msg}\n"
+    msg = msg.nil? ? "" : "#{msg}\n"
     msg << "Expected #{obj.class} model to have column: :#{attribute}"
     err_msg  = []
     conf_msg = []
@@ -57,7 +57,7 @@ module Minitest::Assertions
 
     # bail out if options provided are invalid
     val_opts = [:type, :db_type, :allow_null, :max_length, :default, :primary_key, :auto_increment]
-    invalid_opts  = opts.keys.reject { |o| val_opts.include?(o) }
+    invalid_opts = opts.keys.reject { |o| val_opts.include?(o) }
     unless invalid_opts.empty?
       msg << ", but the following invalid option(s) was found: { "
       invalid_opts.each { |o| msg << "#{o.inspect}; " }
@@ -139,7 +139,7 @@ module Minitest::Assertions
   end
 
   #
-  def refute_have_column(obj, attribute, opts = {}, msg = nil)
+  def refute_have_column(obj, attribute, msg = nil)
     msg = msg.nil? ? "" : "#{msg}\n"
     msg << "Expected #{obj.class} model to NOT have column: :#{attribute}"
     # check if column exists
@@ -152,7 +152,6 @@ module Minitest::Assertions
   end
 
 end
-
 
 # add support for Spec syntax
 module Minitest::Expectations

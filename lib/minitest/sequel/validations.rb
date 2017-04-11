@@ -51,7 +51,7 @@ module Minitest::Assertions
   #     it { model.must_validate_exact_length_of(:title, 12, { message: '...' }) }
   #
   def assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)
-    opts.merge!({ is: exact_length })
+    opts.merge!(is: exact_length)
     assert_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :assert_validates_exact_length_of, :assert_validates_exact_length
@@ -62,7 +62,7 @@ module Minitest::Assertions
   #     it { model.must_validate_length_range_of(:title, 4..12, { message: '...' }) }
   #
   def assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)
-    opts.merge!({ within: range })
+    opts.merge!(within: range)
     assert_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :assert_validates_length_range_of, :assert_validates_length_range
@@ -73,7 +73,7 @@ module Minitest::Assertions
   #     it { model.must_validate_max_length_of(:title, 12, { message: '...' }) }
   #
   def assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)
-    opts.merge!({ maximum: max_length })
+    opts.merge!(maximum: max_length)
     assert_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :assert_validates_max_length_of, :assert_validates_max_length
@@ -84,7 +84,7 @@ module Minitest::Assertions
   #     it { model.must_validate_min_length_of(:title, 12, { message: '...' }) }
   #
   def assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)
-    opts.merge!({ minimum: min_length })
+    opts.merge!(minimum: min_length)
     assert_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :assert_validates_min_length_of, :assert_validates_min_length
@@ -115,7 +115,7 @@ module Minitest::Assertions
   #     it { model.must_validate_integer_of(:author_id, { message: '...' }) }
   #
   def assert_validates_integer(obj, attribute, opts = {}, msg = nil)
-    opts.merge!({ only_integer: true })
+    opts.merge!(only_integer: true)
     assert_validates(obj, :numericality, attribute, opts, msg)
   end
 
@@ -162,12 +162,12 @@ module Minitest::Assertions
   alias_method :assert_validates_confirmation_of, :assert_validates_confirmation
 
   # Base test for validations of a model, used mainly as a shortcut for other assertions
-  def assert_validates(obj, validation_type, attribute, opts = {}, msg = nil, &blk)
+  def assert_validates(obj, validation_type, attribute, opts = {}, msg = nil)
     msg = msg.nil? ? "" : "#{msg}\n"
     err_msg  = []
     conf_msg = []
     unless obj.respond_to?(attribute)
-      assert(false, "Column :#{attribute} is not defined in #{obj.class.to_s}")
+      assert(false, "Column :#{attribute} is not defined in #{obj.class}")
     end
 
     msg << "Expected #{obj.class} to validate :#{validation_type} for :#{attribute} column"
@@ -183,7 +183,7 @@ module Minitest::Assertions
           # bail out if options provided are invalid
           val_opts = _valid_validation_options(validation_type)
 
-          invalid_opts  = opts.keys.reject { |o| val_opts.include?(o) }
+          invalid_opts = opts.keys.reject { |o| val_opts.include?(o) }
           unless invalid_opts.empty?
             msg << ", but the following invalid option(s) was found: { "
             invalid_opts.each { |o| msg << "#{o.inspect}; " }
@@ -195,7 +195,7 @@ module Minitest::Assertions
           _available_validation_options.each do |ov|
             unless opts[ov].nil?
               expected = (h[validation_type][ov].to_s == opts[ov].to_s)
-               conf_msg << "#{ov}: '#{opts[ov]}'"
+                conf_msg << "#{ov}: '#{opts[ov]}'"
               unless expected
                 err_msg << "#{ov}: '#{h[validation_type][ov]}'"
               end
@@ -216,7 +216,7 @@ module Minitest::Assertions
         assert(false, msg)
       end
     else
-      assert(false, "No validations defined in #{obj.class.to_s}")
+      assert(false, "No validations defined in #{obj.class}")
     end
   end
 
@@ -271,7 +271,7 @@ module Minitest::Assertions
   #     it { model.must_validate_exact_length_of(:title, 12, { message: '...' }) }
   #
   def refute_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)
-    opts.merge!({ is: exact_length })
+    opts.merge!(is: exact_length)
     refute_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :refute_validates_exact_length_of, :refute_validates_exact_length
@@ -282,7 +282,7 @@ module Minitest::Assertions
   #     it { model.must_validate_length_range_of(:title, 4..12, { message: '...' }) }
   #
   def refute_validates_length_range(obj, attribute, range, opts = {}, msg = nil)
-    opts.merge!({ within: range })
+    opts.merge!(within: range)
     refute_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :refute_validates_length_range_of, :refute_validates_length_range
@@ -293,7 +293,7 @@ module Minitest::Assertions
   #     it { model.must_validate_max_length_of(:title, 12, { message: '...' }) }
   #
   def refute_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)
-    opts.merge!({ maximum: max_length })
+    opts.merge!(maximum: max_length)
     refute_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :refute_validates_max_length_of, :refute_validates_max_length
@@ -304,7 +304,7 @@ module Minitest::Assertions
   #     it { model.must_validate_min_length_of(:title, 12, { message: '...' }) }
   #
   def refute_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)
-    opts.merge!({ minimum: min_length })
+    opts.merge!(minimum: min_length)
     refute_validates(obj, :length, attribute, opts, msg)
   end
   alias_method :refute_validates_min_length_of, :refute_validates_min_length
@@ -335,7 +335,7 @@ module Minitest::Assertions
   #     it { model.must_validate_integer_of(:author_id, { message: '...' }) }
   #
   def refute_validates_integer(obj, attribute, opts = {}, msg = nil)
-    opts.merge!({ only_integer: true })
+    opts.merge!(only_integer: true)
     refute_validates(obj, :numericality, attribute, opts, msg)
   end
 
@@ -382,18 +382,13 @@ module Minitest::Assertions
   alias_method :refute_validates_confirmation_of, :refute_validates_confirmation
 
   # Base test for validations of a model, used mainly as a shortcut for other assertions
-  def refute_validates(obj, validation_type, attribute, opts = {}, msg = nil, &blk)
+  def refute_validates(obj, validation_type, attribute, opts = {}, msg = nil)
     msg = msg.nil? ? "" : "#{msg}\n"
-    err_msg  = []
-    conf_msg = []
     unless obj.respond_to?(attribute)
-      assert(false, "Column :#{attribute} is not defined in #{obj.class.to_s}, so cannot be validated")
+      assert(false, "Column :#{attribute} is not defined in #{obj.class}, so cannot be validated")
     end
-
     msg << "Expected #{obj.class} NOT to validate :#{attribute} with :#{validation_type}"
-
     if _validated_model?(obj)
-
       if _validated_column?(obj, attribute)
         msg << ", but the column :#{attribute} was validated with :#{validation_type}"
         assert(false, msg)
@@ -401,17 +396,15 @@ module Minitest::Assertions
         assert(true, msg)
       end
     else
-      assert(false, "No validations defined in #{obj.class.to_s}")
+      assert(false, "No validations defined in #{obj.class}")
     end
   end
-
 
   #
   def assert_raises_validation_failed(obj)
     assert_raises(::Sequel::ValidationFailed) { obj.save }
   end
   alias_method :assert_fails_validation, :assert_raises_validation_failed
-
 
   # #
   # #
@@ -424,25 +417,23 @@ module Minitest::Assertions
   #
   # end
 
-
   private
-
 
   #
   def _validated_model?(model)
-   return (model.class.respond_to?(:has_validations?) && model.class.has_validations?)
+    (model.class.respond_to?(:has_validations?) && model.class.has_validations?)
   end
 
   #
   def _validated_column?(model, attribute)
     return false unless _validated_model?(model)
-    return model.class.validation_reflections.keys.include?(attribute.to_sym)
+    model.class.validation_reflections.keys.include?(attribute.to_sym)
   end
 
   #
   def _validated_with_validation_type?(model, attribute, validation_type)
     return false unless _validated_column?(model, attribute)
-    return _validation_types_hash_for_column(model, attribute).keys.include?(validation_type)
+    _validation_types_hash_for_column(model, attribute).keys.include?(validation_type)
   end
 
   #
@@ -508,8 +499,7 @@ module Minitest::Assertions
       # :within     :: The array/range that must include the size of the value for it to be valid
       #                 (no default)
 
-      [ :is, :maximum, :minimum, :nil_message, :too_long, :too_short, :within, :wrong_length ]
-      .each { |a| arr << a }
+      [:is, :maximum, :minimum, :nil_message, :too_long, :too_short, :within, :wrong_length].each { |a| arr << a }
     else
       arr
     end unless type.nil?
@@ -517,7 +507,6 @@ module Minitest::Assertions
   end
 
 end
-
 
 # add support for Spec syntax
 module Minitest::Expectations
@@ -557,5 +546,4 @@ module Minitest::Expectations
   infect_an_assertion :refute_validates_acceptance,   :wont_validate_acceptance_of,   :reverse
   infect_an_assertion :refute_validates_inclusion,    :wont_validate_inclusion_of,    :reverse
   infect_an_assertion :refute_validates_uniqueness,   :wont_validate_uniqueness_of,   :reverse
-
 end

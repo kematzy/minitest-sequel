@@ -20,15 +20,13 @@ module Minitest::Assertions
   #     proc { assert_timestamped_model_instance(m, updated_record: false) }.must_have_error(/expected #.updated_at to be NIL on new record/)
   # 
   # 
-  def assert_timestamped_model_instance(model, opts = {}, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
+  def assert_timestamped_model_instance(model, opts = {})
     model_class = model.class
-    # m = model.create(opts)
     # 1. test for Timestamps plugin
-    plugs = model_class.instance_variable_get("@plugins").map { |p| p.to_s }
+    plugs = model_class.instance_variable_get("@plugins").map(&:to_s)
     if plugs.include?("Sequel::Plugins::Timestamps")
       # 2. test for created_at / :updated_at columns
-      assert_have_column(model, :created_at, {} ,"AssertTimestampedModelInstance - expected model to have column :created_at, Debug: [#{model.inspect}]")
+      assert_have_column(model, :created_at, {}, "AssertTimestampedModelInstance - expected model to have column :created_at, Debug: [#{model.inspect}]")
       assert_have_column(model, :updated_at, {}, "AssertTimestampedModelInstance - expected model to have column :updated_at, Debug: [#{model.inspect}]")
 
       if opts[:updated_record]
@@ -45,7 +43,6 @@ module Minitest::Assertions
     else
       raise(Minitest::Assertion, "Not a plugin(:timestamps) model, available plugins are: #{plugs.inspect}")
     end
-
   end
 
   # Test if a model class is timestamped with .plugin(:timestamps)
@@ -68,15 +65,13 @@ module Minitest::Assertions
   #     proc { assert_timestamped_model(Comment, {body: "I think...", email: "e@email.com"}) }.wont_have_error
   # 
   # 
-  def assert_timestamped_model(model, opts = {}, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
+  def assert_timestamped_model(model, opts = {})
     m = model.create(opts)
-
     # 1. test for Timestamps plugin
-    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+    plugs = model.instance_variable_get("@plugins").map(&:to_s)
     if plugs.include?("Sequel::Plugins::Timestamps")
       # 2. test for created_at / :updated_at columns
-      assert_have_column(m, :created_at, {} ,"AssertTimestampedModel - expected model to have column :created_at. Debug: [#{m.inspect}]")
+      assert_have_column(m, :created_at, {}, "AssertTimestampedModel - expected model to have column :created_at. Debug: [#{m.inspect}]")
       assert_have_column(m, :updated_at, {}, "AssertTimestampedModel - expected model to have column :updated_at. Debug: [#{m.inspect}]")
 
       # 3.  initial record
@@ -116,20 +111,15 @@ module Minitest::Assertions
   #     proc { assert_timestamped_model(Comment, {body: "I think...", email: "e@email.com"}) }.wont_have_error
   # 
   # 
-  def assert_paranoid_model(model, opts = {}, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
-    m  = model.create(opts)
-
+  def assert_paranoid_model(model, opts = {})
+    m = model.create(opts)
     # 1. test for Paranoid plugin
-    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+    plugs = model.instance_variable_get("@plugins").map(&:to_s)
     if plugs.include?("Sequel::Plugins::Paranoid")
-
       assert_nil(m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be NIL on new model")
-
       # after update
       assert(m.save, "AssertParanoidModel:save - updated model failed. Debug: [#{m.inspect}]")
       assert_nil(m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be NIL on updated model")
-
       # after destroy
       assert(m.destroy, "AssertParanoidModel:destroy - destroy model failed. Debug: [#{m.inspect}]")
       assert_instance_of(Time, m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be instance of Time on destroyed model, Debug: [#{m.inspect}]")
@@ -144,9 +134,8 @@ module Minitest::Assertions
   #
   #     it { refute_timestamped_model(Post) }
   #
-  def refute_timestamped_model(model, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
-    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+  def refute_timestamped_model(model, opts = {})
+    plugs = model.instance_variable_get("@plugins").map(&:to_s)
     refute_includes(plugs, "Sequel::Plugins::Timestamps", "RefuteTimestampedModel - expected #{model} to NOT be a :timestamped model, but it was, Debug: [#{plugs.inspect}]")
   end
   
@@ -154,9 +143,8 @@ module Minitest::Assertions
   #
   #     it { refute_paranoid_model(Post) }
   #
-  def refute_paranoid_model(model, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
-    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+  def refute_paranoid_model(model)
+    plugs = model.instance_variable_get("@plugins").map(&:to_s)
     refute_includes(plugs, "Sequel::Plugins::Paranoid", "RefuteParanoidModel - expected #{model} to NOT be a :paranoid model, but it was, Debug: [#{plugs.inspect}]")
   end
   
