@@ -65,7 +65,7 @@ module Minitest::Assertions
           arr << {
             attribute:    o[:name],
             type:         o[:type],
-            class:        o[:class_name].to_sym,
+            class:        o[:class_name].to_s,
             join_table:   o[:join_table],
             left_keys:    o[:left_keys],
             right_keys:   o[:right_keys]
@@ -74,7 +74,7 @@ module Minitest::Assertions
           arr << {
             attribute:  o[:name],
             type:       o[:type],
-            class:      o[:class_name].to_sym,
+            class:      o[:class_name].to_s,
             keys:       o[:keys]
           }
         end
@@ -88,7 +88,7 @@ module Minitest::Assertions
       opts.each do |key, value|
         conf_msg << { key => value }
         if assoc[key] != value
-          err_msg << { key => assoc[key] }
+          err_msg << { key => assoc[key].to_s }
           matching = false
         end
       end

@@ -21,7 +21,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on incorrect association" do
-          expected =  /Expected .* to have a :many_to_one association :comment but no association ':comment' was found - \navailable associations are: \[ {:attribute=>:comments, :type=>:one_to_many, :class=>:Comment, :keys=>\[:.*_id\]} \]/
+          expected =  /Expected .* to have a :many_to_one association :comment but no association ':comment' was found - \navailable associations are: \[ {:attribute=>:comments, :type=>:one_to_many, :class=>\"(::)?Comment\", :keys=>\[:.*_id\]} \]/
           assert_error_raised(expected) do
             assert_association(@c, :many_to_one, :comment)
           end
@@ -32,7 +32,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on valid association with incorrect options passed" do
-          expected = /Expected .* to have a :one_to_many association :comments with given options: {:key=>:comments_id} but should be {:key=>:.*_id}/
+          expected = /Expected .* to have a :one_to_many association :comments with given options: {:key=>:comments_id} but should be {:key=>\"_id\"}/
           assert_error_raised(expected) do
             assert_association(@c, :one_to_many, :comments, { key: :comments_id })
           end
@@ -61,7 +61,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on incorrect association" do
-          expected = /Expected .* to have a :one_to_many association :comment but no association ':comment' was found - \navailable associations are: \[ {:attribute=>:comments, :type=>:one_to_many, :class=>:Comment, :keys=>\[:.*_id\]} \]/
+          expected = /Expected .* to have a :one_to_many association :comment but no association ':comment' was found - \navailable associations are: \[ {:attribute=>:comments, :type=>:one_to_many, :class=>\"(::)?Comment\", :keys=>\[:.*_id\]} \]/
           assert_error_raised(expected) do
             assert_association_one_to_many(@m, :comment, {})
           end
@@ -72,7 +72,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on valid association with incorrect options passed" do
-          expected = /Expected .* to have a :one_to_many association :comments with given options: {:class_name=>\"Comments\"} but should be {:class_name=>\"Comment\"}/
+          expected = /Expected .* to have a :one_to_many association :comments with given options: {:class_name=>\"Comments\"} but should be {:class_name=>\"(::)?Comment\"}/
           assert_error_raised(expected) do
             assert_association_one_to_many(@m, :comments, { class_name: "Comments" })
           end
@@ -99,7 +99,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on incorrect association" do
-          expected = /Expected .* to have a :many_to_one association :posts but no association ':posts' was found - \navailable associations are: \[ {:attribute=>:post, :type=>:many_to_one, :class=>:Post, :keys=>\[:.*_id\]} \]/
+          expected = /Expected .* to have a :many_to_one association :posts but no association ':posts' was found - \navailable associations are: \[ {:attribute=>:post, :type=>:many_to_one, :class=>\"(::)?Post\", :keys=>\[:.*_id\]} \]/
           assert_error_raised(expected) do
             assert_association_many_to_one(@m, :posts, {})
           end
@@ -110,7 +110,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on valid association with incorrect options" do
-          expected = /Expected .* to have a :many_to_one association :post with given options: {:class_name=>\"Posts\"} but should be {:class_name=>\"Post\"}/
+          expected = /Expected .* to have a :many_to_one association :post with given options: {:class_name=>\"Posts\"} but should be {:class_name=>\"(::)?Post\"}/
           assert_error_raised(expected) do
             assert_association_many_to_one(@m, :post, { class_name: "Posts" })
           end
@@ -139,7 +139,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on incorrect association" do
-          expected = /Expected .* to have a :many_to_many association :post but no association ':post' was found - \navailable associations are: \[ {:attribute=>:posts, :type=>:many_to_many, :class=>:Post, :join_table=>:.*, :left_keys=>\[:(.*)_id\], :right_keys=>\[:(.*)_id\]} \]/
+          expected = /Expected .* to have a :many_to_many association :post but no association ':post' was found - \navailable associations are: \[ {:attribute=>:posts, :type=>:many_to_many, :class=>\"(::)?Post\", :join_table=>:.*, :left_keys=>\[:(.*)_id\], :right_keys=>\[:(.*)_id\]} \]/
           assert_error_raised(expected) do
             assert_association_many_to_many(@m, :post, {})
           end
@@ -150,7 +150,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on valid association with incorrect options passed" do
-          expected = /Expected .* to have a :many_to_many association :posts with given options: {:class_name=>\"Posts\"} but should be {:class_name=>\"Post\"}/
+          expected = /Expected .* to have a :many_to_many association :posts with given options: {:class_name=>\"Posts\"} but should be {:class_name=>\"(::)?Post\"}/
           assert_error_raised(expected) do
             assert_association_many_to_many(@m, :posts, { class_name: "Posts" })
           end
@@ -182,7 +182,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on incorrect association" do
-          expected = /Expected .* to have a :one_to_one association :key_posts but no association ':key_posts' was found - \navailable associations are: \[ {:attribute=>:key_post, :type=>:one_to_one, :class=>:Post, :keys=>\[:.*_id\]} \]/
+          expected = /Expected .* to have a :one_to_one association :key_posts but no association ':key_posts' was found - \navailable associations are: \[ {:attribute=>:key_post, :type=>:one_to_one, :class=>\"(::)?Post\", :keys=>\[:.*_id\]} \]/
           assert_error_raised(expected) do
             assert_association_one_to_one(@m, :key_posts, {})
           end
@@ -193,7 +193,7 @@ class Minitest::SequelAssociationsTest < Minitest::Spec
         end
 
         it "should raise error on :one_to_one association { Author, :key_post } with incorrect options" do
-          expected = /Expected .* to have a :one_to_one association :key_post with given options: {:class_name=>\"Comments\"} but should be {:class_name=>\"Post\"}/
+          expected = /Expected .* to have a :one_to_one association :key_post with given options: {:class_name=>\"Comments\"} but should be {:class_name=>\"(::)?Post\"}/
           assert_error_raised(expected) do
             assert_association_one_to_one(@m, :key_post, { class_name: "Comments" })
           end
