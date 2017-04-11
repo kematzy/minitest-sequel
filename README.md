@@ -579,6 +579,47 @@ proc { assert_timestamped_model_instance(m, updated_record: false) }.must_have_e
 ```
 
 
+
+<br>
+
+<br>
+<br>
+
+----
+
+<br>
+
+## Miscellaneous Helpers
+
+This gem also contains a collection of "helpers" that aid working with Sequel models:
+
+<br>
+
+#### `ensure_working_CRUD(obj, attribute)`
+
+Enables quick tests to ensure that the basic CRUD functionality is working correctly for a Model
+
+```ruby
+ensure_working_CRUD(User, :name)
+```
+
+**NOTE!**
+* the passed `_model` argument must be the actual Model class and NOT a string or symbol
+* the passed attribute `_attr` must be a String attribute or the tests will fail
+
+**DEPENDENCIES**
+
+This test depends upon being able to create a new model instance for each test via using
+[Sequel Factory's](https://github.com/mjackson/sequel-factory) `#make()` method
+
+
+<br>
+<br>
+
+----
+
+<br>
+
 ## Installation
 
 Add this line to your application's Gemfile:

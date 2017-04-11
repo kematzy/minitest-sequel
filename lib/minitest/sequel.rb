@@ -6,7 +6,6 @@ require "sequel/extensions/inflector" unless "".respond_to?(:classify)
 # reopening to add additional functionality
 module Minitest::Assertions
 
-
   private
 
   # handles converting `:nil`, `:false` values
@@ -27,3 +26,4 @@ require "minitest/sequel/columns"
 require "minitest/sequel/associations"
 require "minitest/sequel/validations"
 require "minitest/sequel/plugins"
+require "minitest/sequel/helpers"

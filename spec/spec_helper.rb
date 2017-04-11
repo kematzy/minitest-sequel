@@ -88,8 +88,16 @@ DB.create_table(:dummies) do
   column :password, :text
 end
 
+####
 
-class Post < Sequel::Model; end
+class Post < Sequel::Model;
+
+  # used by #ensure_working_CRUD tests
+  def self.make
+    create(title: "Post Title")
+  end
+
+end
 class CreatedPost < Sequel::Model; end
 class UpdatedPost < Sequel::Model; end
 
