@@ -1,4 +1,4 @@
-require "minitest/sequel"
+# require "minitest/sequel"
 
 # reopening to add association functionality
 module Minitest::Assertions

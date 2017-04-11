@@ -1,4 +1,4 @@
-require "minitest/sequel"
+# require "minitest/sequel"
 
 # reopening to add validations functionality
 module Minitest::Assertions

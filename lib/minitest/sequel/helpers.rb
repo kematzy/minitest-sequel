@@ -1,4 +1,4 @@
-require "minitest/sequel"
+# require "minitest/sequel"
 
 # reopening to add helpers functionality
 class Minitest::Spec
