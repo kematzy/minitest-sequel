@@ -27,13 +27,13 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "minitest", "~> 5.7", ">= 5.7.0"
-  spec.add_runtime_dependency "sequel", "~> 4.35.0" # "4.29.0"
-  spec.add_runtime_dependency "sequel-paranoid", "~> 0.6.2"
+  spec.add_runtime_dependency "minitest", ">= 5.7.0"
+  spec.add_runtime_dependency "sequel", ">= 4.35.0" # "4.29.0"
+  spec.add_runtime_dependency "sequel-paranoid", ">= 0.6.2"
   # spec.add_runtime_dependency "sequel-factory", "~> 1.0.0"
 
-  spec.add_development_dependency "bundler", "~> 1.10"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "bundler", ">= 1.10"
+  spec.add_development_dependency "rake", ">= 10.0"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "minitest-assert_errors"
   spec.add_development_dependency "minitest-hooks"
