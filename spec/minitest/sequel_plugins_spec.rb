@@ -1,18 +1,18 @@
 require_relative "../spec_helper"
 
 describe Minitest::Spec do
+  
+  describe "# assert_timestamped_model()" do
+    
+    describe "a .plugin(:timestamps) model" do
 
-  describe "a .plugin(:timestamps) model" do
+      it "should raise no error on a valid model" do
+        c = Class.new(::Post)
+        c.plugin(:timestamps)
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
+      end
 
-    it "should raise no error" do
-      c = Class.new(::Post)
-      c.plugin(:timestamps)
-      proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
-    end
-
-    describe "#:created_at" do
-
-      it "should raise no error when the :created_at column is present" do
+      it "should raise no error when the :created_at and :updated_at columns are present" do
         c = Class.new(::Post)
         c.plugin(:timestamps)
         proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
@@ -25,485 +25,194 @@ describe Minitest::Spec do
         proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
       end
 
-      it "should be a timestamp on a new model" do
-        c = Class.new(::Post)
-        c.plugin(:timestamps)
-        mi = c.create(title: "Dummy", created_at: nil)
-        proc { assert_timestamped_model_instance(mi) }.wont_have_error
-      end
-
-      # it 'should be a timestamp on a new model msdlfajfasj' do
-      #   c = Class.new(::Post)
-      #   c.plugin(:timestamps)
-      #   mi = c.create(title: 'Dummy')
-      #   proc { assert_timestamped_model_instance(mi) }.wont_have_error
-      # end
-
-    end
-
-    describe "#:updated_at" do
-
-      it "should raise no error when the :updated_at column is present" do
-        c = Class.new(::Post)
-        c.plugin(:timestamps)
-        proc { assert_timestamped_model(c, {title: "Dummy"}) }.wont_have_error
-      end
-
       it "should raise an error when the :updated_at column is missing" do
         c = Class.new(::UpdatedPost)
         c.plugin(:timestamps)
         e = %r{Expected .* model to have column: :updated_at but no such column exists}
         proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
       end
+      
+    end
 
-      it "should be a nil on a new model" do
-        c = Class.new(::Post)
-        c.plugin(:timestamps)
-        mi = c.create(title: "Dummy")
-        proc { assert_timestamped_model_instance(mi, updated_record: false) }.wont_have_error
-      end
+    describe "a NON .plugin(:timestamps) model" do
 
-      it "should raise an error if :updated_at is not nil on a new model" do
+      it "should raise an error" do
         c = Class.new(::Post)
-        c.plugin(:timestamps)
-        mi = c.create(title: "Dummy", updated_at: Time.now )
-        proc {
-          assert_timestamped_model_instance(mi, updated_record: false)
-        }.must_have_error(/AssertTimestampedModelInstance:updated - expected #updated_at to be NIL on new record/)
-      end
-
-      it "should be a timestamp on an updated model" do
-        c = Class.new(::Post)
-        c.plugin(:timestamps)
-        mi = c.create(title: "Dummy")
-        mi.update(title: "updated")
-        mi.save
-        mi.updated_at.wont_be_nil
-        proc { assert_timestamped_model_instance(mi, updated_record: true) }.wont_have_error
+        e = "Not a plugin(:timestamps) model, available plugins are: [\"Sequel::Model\", \"Sequel::Model::Associations\", \"Sequel::Plugins::ValidationClassMethods\"]"
+        proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
       end
 
     end
-
+    
   end
-
-  describe "a NON .plugin(:timestamps) model" do
-
-    it "should raise an error" do
+  
+  describe "# assert_timestamped_model_instance()" do
+    
+    it "should not raise an error on a new model and set the :created_at: to a timestamp" do
       c = Class.new(::Post)
-      e = "Not a plugin(:timestamps) model, available plugins are: [\"Sequel::Model\", \"Sequel::Model::Associations\", \"Sequel::Plugins::ValidationClassMethods\"]"
-      proc { assert_timestamped_model(c, {title: "Dummy"}) }.must_have_error(e)
+      c.plugin(:timestamps)
+      mi = c.create(title: "Dummy", created_at: nil)
+      proc { assert_timestamped_model_instance(mi) }.wont_have_error
+    end
+    
+    it "should not raise an error on an updated model and set the :updated_at to a timestamp" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      mi = c.create(title: "Dummy")
+      mi.update(title: "updated")
+      mi.save
+      mi.updated_at.wont_be_nil
+      proc { assert_timestamped_model_instance(mi, updated_record: true) }.wont_have_error
+    end
+    
+    it "should set :updated_at to NIL on a new model" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      mi = c.create(title: "Dummy")
+      proc { assert_timestamped_model_instance(mi, updated_record: false) }.wont_have_error
+    end
+
+    it "should raise an error if :updated_at is not nil on a new model" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      mi = c.create(title: "Dummy", updated_at: Time.now )
+      proc {
+        assert_timestamped_model_instance(mi, updated_record: false)
+      }.must_have_error(/AssertTimestampedModelInstance:updated - expected #updated_at to be NIL on new record/)
+    end
+    
+  end
+  
+  describe "model.must_be_timestamped_model()" do
+    
+    it "should NOT raise an error on a :timestamped model" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      proc { c.must_be_timestamped_model({title: "Timestamped"}) }.wont_have_error
+    end
+    
+    it "should raise an error on a NON :timestamped model" do
+      c = Class.new(::Post)
+      proc { c.must_be_timestamped_model({title: "Timestamped"}) }.must_have_error(/Not a plugin\(:timestamps\) model, available plugins are/)
     end
 
   end
 
+  describe "# assert_paranoid_model()" do
+  
+    describe "a .plugin(:paranoid) model" do
 
-
-
-
-  # describe 'a valid timestamped model' do
-  #
-  #   it 'should not raise any errors' do
-  #     c = Class.new(::Post)
-  #     c.plugin(:timestamps)
-  #     proc { assert_timestamped_model(c, {title: 'Dummy'}) }.wont_have_error
-  #   end
-  #
-  #   # it_must_be_a_timestamped_model(Post) do
-  #   #   Post.plugin(:timestamps)
-  #   #   @m = Post.create(title: 'it works')
-  #   # end
-  #
-  # end
-  #
-  # describe 'a non-timestamped model' do
-  #
-  #   it 'should raise error - :created_at nil' do
-  #     e = %r{:created_at should be a timestamp, but was \[nil\];}
-  #     c = Class.new(::Post)
-  #     proc { assert_timestamped_model(c, {title: 'Dummy'}) }.must_have_error(e)
-  #   end
-  #
-  #   it 'should raise error - :created_at nil' do
-  #     e = 'e' #%r{:created_at should be a timestamp, but was \[nil\];}
-  #     c = Class.new(::Post)
-  #     proc { assert_timestamped_model(c, {title: 'Dummy', created_at: Time.now }) }.must_have_error(e)
-  #   end
-  #
-  #   # it_must_be_a_timestamped_model(Dummy) { @m = Dummy.create(title: 'it fails') }
-  #
-  # end
-
-
-  describe "ClassMethods" do
-    before do
-      @c = Class.new(::Minitest::Spec)
-
+      it "should raise no error on a valid model" do
+        c = Class.new(::Author)
+        c.plugin(:paranoid)
+        proc { assert_paranoid_model(c, {name: "John Lescroart"}) }.wont_have_error
+      end
+    
+      it "should raise no error when the :deleted_at column is present" do
+        c = Class.new(::Author)
+        c.plugin(:paranoid)
+        proc { assert_paranoid_model(c, {name: "Patricia Cornwell"}) }.wont_have_error
+      end
+      
+      it "should raise a NoMethodError when the :deleted_at column is missing" do
+        c = Class.new(::ParanoidPost)
+        c.plugin(:paranoid)
+        proc { 
+          assert_paranoid_model(c, {title: "Dummy"}) 
+        }.must_raise(NoMethodError)
+      end
+      
     end
 
-    # it 'shoudl...' do
-    #   @c.methods.sort.must_equal 'd'
-    # end
+    describe "a NON .plugin(:paranoid) model" do
 
-    it "should..." do
-      # proc { @c.it_must_be_a_timestamped_model(Post) { @m = Post.create } }.must_equal 'd'
-      # @c.class_eval { it_must_be_a_timestamped_model(Post) { @m = Post.create } }.must_equal 'd'
+      it "should raise an error" do
+        c = Class.new(::Post)
+        e = "Not a plugin(:paranoid) model, available plugins are: [\"Sequel::Model\", \"Sequel::Model::Associations\", \"Sequel::Plugins::ValidationClassMethods\"]"
+        proc { assert_paranoid_model(c, {title: "Dummy"}) }.must_have_error(e)
+      end
+
     end
+        
+  end
 
-
+  describe "model.must_be_a_paranoid_model()" do
+    
+    it "should NOT raise an error on a :paranoid model" do
+      c = Class.new(::Author)
+      c.plugin(:paranoid)
+      proc { c.must_be_a_paranoid_model({name: "Stephen King"}) }.wont_have_error
+    end
+    
+    it "should raise an error on a NON :paranoid model" do
+      c = Class.new(::Post)
+      proc { c.must_be_a_paranoid_model({title: "Paranoid"}) }.must_have_error(/Not a plugin\(:paranoid\) model, available plugins are/)
+    end
 
   end
 
+  describe "# refute_timestamped_model()" do
+  
+    it "should raise error on a .plugin(:timestamps) model" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      e = /expected .* to NOT be a :timestamped model, but it was/
+      proc { refute_timestamped_model(c) }.must_have_error(e)
+    end
 
-  # describe 'Assertions' do
-  #
-  #   describe '#.assert_valid_model' do
-  #
-  #     it 'should raise no error on a valid model' do
-  #       proc { assert_valid_model(Post.new) }.wont_have_error
-  #     end
-  #
-  #     it 'should raise an error on a invalid model' do
-  #       proc { assert_valid_model(Dummy.new) }.must_have_error('e')
-  #     end
-  #
-  #   end
-  #
-  # end
-  #
-  #
-  # describe '.plugin(:timestamps)' do
-  #
-  #   before do
-  #     @c = Class.new(Post)
-  #     @c1 = @c.dup
-  #     @c.plugin(:timestamps)
-  #
-  #     @d = Class.new(Dummy)
-  #   end
-  #
-  #   describe 'a timestamped model' do
-  #     # Post.plugin(:timestamps)
-  #
-  #     it '...' do
-  #       assert_output('e','c') { assert_timestamped_model(@d, {}) }
-  #     end
-  #     # it_must_be_timestamped_model(Post) do
-  #     #   @m = @c.create
-  #     # end
-  #
-  #   end
-  #
-  #   describe 'a non-timestamped model' do
-  #
-  #     # it '' do
-  #     #   instance_exec {
-  #     #     Minitest::Spec.it_must_be_timestamped_model(Comment) do
-  #     #       @m = Comment.create
-  #     #     end
-  #     #   }.must_have_error 'e'
-  #     # end
-  #
-  #   end
-  #
-  # end
+    it "should raise NO error on a NON .plugin(:timestamps) model" do
+      c = Class.new(::Dummy)
+      proc { refute_timestamped_model(c) }.wont_have_error
+    end
+        
+  end
+  
+  describe "# refute_paranoid_model()" do
+  
+    it "should raise error on a .plugin(:paranoid) model" do
+      c = Class.new(::Author)
+      c.plugin(:paranoid)
+      e = /expected .* to NOT be a :paranoid model, but it was/
+      proc { refute_paranoid_model(c) }.must_have_error(e)
+    end
 
+    it "should raise NO error on a NON .plugin(:paranoid) model" do
+      c = Class.new(::Post)
+      proc { refute_paranoid_model(c) }.wont_have_error
+    end
+        
+  end
+  
+  describe "model.wont_be_timestamped_model()" do
+    
+    it "should NOT raise an error on a NON :timestamped model" do
+      c = Class.new(::Post)
+      proc { c.wont_be_timestamped_model({title: "Timestamped"}) }.wont_have_error
+    end
+    
+    it "should raise an error on a :timestamped model" do
+      c = Class.new(::Post)
+      c.plugin(:timestamps)
+      proc { c.wont_be_timestamped_model({title: "Timestamped"}) }.must_have_error(/to NOT be a :timestamped model, but it was/)
+      proc { c.wont_be_a_timestamped_model({title: "Timestamped"}) }.must_have_error(/to NOT be a :timestamped model, but it was/)
+    end
+    
+  end
+  
+  describe "model.wont_be_paranoid_model()" do
+    
+    it "should NOT raise an error on a NON :paranoid model" do
+      c = Class.new(::Author)
+      proc { c.wont_be_paranoid_model({name: "Paranoid"}) }.wont_have_error
+    end
+    
+    it "should raise an error on a :paranoid model" do
+      c = Class.new(::Author)
+      c.plugin(:paranoid)
+      proc { c.wont_be_a_paranoid_model({name: "Paranoid"}) }.must_have_error(/to NOT be a :paranoid model, but it was/)
+    end
+    
+  end
+  
+  
 end
-
-
-
-
-
-#
-# module Minitest::Assertions
-#
-#   def fuck_my_ass_instance(&blk)
-#     a = instance_eval do
-#       yield(blk)
-#     end
-#   end
-#
-#   def fuck_my_ass_class(&blk)
-#     a = Minitest::Spec.class_eval do
-#       yield(blk)
-#     end
-#   end
-#   def fuck_my_ass_module(&blk)
-#     a = Minitest::Spec.module_eval do
-#       yield(blk)
-#     end
-#   end
-# end
-#
-#
-# # class ThisFuckingShit < Minitest::Test
-# #
-# #   def test_gofuckyourself
-# #
-# #     # # proc {
-# #     #   fuck_my_ass_instance do
-# #     #     Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #     #   end
-# #     #
-# #       fuck_my_ass_class do
-# #         it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #       end
-# #
-# #       fuck_my_ass_module do
-# #         Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #       end
-# #     # }.must_have_error 'e'
-# #     # a = instance_eval do
-# #     #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #     # end
-# #     # assert_equal('fuck', a)
-# #   end
-#
-# #
-# #   # def test_gofuckyourself
-# #   #   a = Minitest::Spec.class_eval {
-# #   #     it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #   #   }
-# #   #   assert_equal('fuck', a)
-# #   # end
-# #
-# #   # def test_gofuckyourself
-# #   #   a = Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #   #   assert_equal('fuck', a)
-# #   # end
-# #
-# #   # def test_gofuckyourself
-# #   #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #   #   # assert_equal('fuck', a)
-# #   # end
-# #
-# #   # def test_gofuckyourself
-# #   #   a = Minitest::Spec.instance_eval {
-# #   #     it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #   #   }
-# #   #   assert_equal('fuck', a)
-# #   # end
-# #   #
-# # end
-#
-#
-# describe Minitest::Spec do
-#
-#   # it 'a' do
-#   #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-#   # end
-#
-#
-#   #   proc {
-#   #     proc {
-#   #       Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-#   #     }.call #.must_have_error('f')
-#   #   }.call.must_equal 'fuck'
-#   # end
-#   #
-# end
-#
-#
-# # class Minitest::SequelPluginsTest < Minitest::Spec
-#
-# #   describe Minitest::Spec do
-# #
-# #     describe 'plugins' do
-# #
-# #       describe '.plugin(:timestamps)' do
-# #         Post.plugin(:timestamps)
-# #
-# #         # it_must_be_timestamped_model(Post) do
-# #         #   @m = Post.create
-# #         # end
-# #
-# #         # before do
-# #         # # it_must_be_timestamped_model(Comment) do
-# #         # #   @m = Comment.create
-# #         # # end
-# #         # # @a = 'fuckiangdsalgdjlasdgdlgjaldsjgflkadfklsadflkadfslkjelkj'
-# #         #   @a = Minitest::Spec.class_eval do
-# #         #     proc {
-# #         #       # Comment.new.must_respond_to(:fuckmyass)
-# #         #       it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #         #     }.call
-# #         #
-# #         #     #
-# #         #   end
-# #         # end
-# #
-# #
-# #         it 'shfofudsalfdsalfdsjafldjasdflkadflkjsdalkfasd,jfdsjkfwdsjklxadskljdsfklsdjfal ds' do
-# #
-# #           # proc {
-# #           #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #           # }.must_output('d', 'e')
-# #
-# #           # proc {
-# #           #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #           # }.must_equal 'd'
-# #
-# #           # proc {
-# #           #   Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #           # }.call.must_equal 'd'
-# #
-# #
-# #           # Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #           # # .must_output('d', 'e')
-# #
-# #
-# #         end
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #
-# #         # it 'should.....' do
-# #         #   a = Minitest::Spec.it_must_be_timestamped_model(Comment) { @m = Comment.create }
-# #         #   a.must_equal 'd'
-# #         #   # @a.must_equal 'd'
-# #         # end
-# #
-# #         it 'should...' do
-# #           # proc {
-# #             # c = Minitest::Spec
-# #
-# #             # proc {
-# #               # c.instance_eval do
-# #                 # Minitest::Spec.
-# #                 # it_must_be_timestamped_model(Comment) do
-# #                 #   @m = Comment.create
-# #                 # end
-# #               # end
-# #             # }.must_output('e')
-# #         end
-# #
-# #         # before do
-# #         #   @c = Class.new(Post)
-# #         #   @c1 = @c.dup
-# #         #   @c.plugin(:timestamps)
-# #         #
-# #         #   @d = Class.new(Dummy)
-# #         # end
-# #         #
-# #         # it 'should raise no error for a timestamped model' do
-# #         #   proc { assert_timestamped_model(@c, {}) }.wont_have_error
-# #         # end
-# #         #
-# #         # it 'should raise an error for a non-timestamped model' do
-# #         #   e  = 'dummy'
-# #         #   proc {
-# #         #     assert_timestamped_model(@c1, { created_at: Time.now })
-# #         #   }.must_have_error(e)
-# #         # end
-# #         #
-# #         # it 'should raise an error for a non-timestamped model without a :created_at column' do
-# #         #   e  = /Expected .* model to have column: :created_at but no such column exists/
-# #         #   proc {
-# #         #     assert_timestamped_model(@d, {})
-# #         #   }.must_have_error(e)
-# #         # end
-# #
-# #         # before do
-# #         #   @c = Class.new(Minitest::Spec)
-# #         #   @c.extend(SequelPluginsVerfication)
-# #         #   @m = @c.new
-# #         # end
-# #         #
-# #         # it 'should ....' do
-# #         #   # @c.methods.sort.must_equal 'd'
-# #         #   # @m.methods.sort.must_equal 'd'
-# #         # end
-# #
-# #       end
-# #
-# #
-# #     end
-# #
-# #
-# #
-# #
-# #
-# #     # module ::T; self.extend(SequelPluginsVerfication); end
-# #
-# #
-# #
-# #
-# #     describe 'testing methods' do
-# #
-# #
-# #
-# #       # it { assert_timestamped_model(Post) }
-# #       # before do
-# #       #   # @c = T.new
-# #       # end
-# #
-# #       it 'should do somethings' do
-# #         # SequelPluginsVerfication.methods.sort.must_equal 'd'
-# #
-# #         # proc {
-# #           # SequelPluginsVerfication.verify_is_a_timestamped_model(Dummy)
-# #         # }.must_have_error('e')
-# #
-# #
-# #         # @c.methods.sort.must_equal 'd'
-# #         # assert_output('e', 'd') { @c.verify_is_a_timestamped_model(Post, { title: 'Dummy', body: 'Default'}) }
-# #
-# #         # out, err = capture_io do
-# #         #   @c.verify_is_a_timestamped_model(Post, { title: 'Dummy', body: 'Default'})
-# #         # end
-# #
-# #         # assert_match %r%info%, out
-# #         # assert_match %r%bad%, err
-# #         # proc {
-# #         #   @c.verify_is_a_timestamped_model(Post, { title: 'Dummy', body: 'Default'})
-# #         # }.must_have_error('e')
-# #
-# #         # @c.verify_is_a_timestamped_model(Post).must_equal 'd'
-# #         # @c.verify_is_a_timestamped_model(Post, { title: ('Dummy', body: 'Default'}).must_equal 'd'
-# #
-# #
-# #         # proc {
-# #         #   T.verify_is_a_timestamped_model(Dummy)
-# #         # }.must_have_error('e')
-# #       end
-# #
-# #     end
-# # #     # proc {
-# # #       verify_is_a_timestamped_model(Post)
-# # #       verify_is_a_timestamped_model(Dummy)
-# # #     # }.must_have_error('e')
-# # #
-# # #     describe 'testing DB plugins' do
-# # #
-# # #       describe '.verify_is_a_timestamped_model()' do
-# # #
-# # #         it 'should...' do
-# # #           # methods.sort.must_equal 'd'
-# # #           # proc {
-# # #             # verify_is_a_timestamped_model(Post)
-# # #           # }.wont_have_error
-# # #         end
-# # #
-# # #         it 'should...' do
-# # #           # methods.sort.must_equal 'd'
-# # #           # assert_output('e','d') {
-# # #             # verify_is_a_timestamped_model(Dummy)
-# # #           # }
-# # #         end
-# # #
-# # #       end
-# # #
-# # #     end
-# #
-# #   end
-#
-# # end

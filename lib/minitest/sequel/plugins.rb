@@ -96,257 +96,83 @@ module Minitest::Assertions
     end
   end
 
-  #
-  #
+  # Test if a model class is paranoid with .plugin(:paranoid) via [Sequel-Paranoid](https://github.com/sdepold/sequel-paranoid)
+  # 
+  #     # Declared locally in the Model
+  #     class Comment < Sequel::Model
+  #       plugin(:paranoid)
+  #     end
+  #     proc { assert_paranoid_model(Comment) }.wont_have_error
+  # 
+  #     # on a non-paranoid model
+  #     class Post < Sequel::Model; end
+  #     proc { assert_paranoid_model(Post) }.must_have_error(/Not a plugin\(:paranoid\) model, available plugins are/)
+  # 
+  # 
+  #  NOTE!
+  # 
+  #  You can also pass attributes to the created model in the tests via the `opts` hash like this:
+  # 
+  #     proc { assert_timestamped_model(Comment, {body: "I think...", email: "e@email.com"}) }.wont_have_error
+  # 
+  # 
   def assert_paranoid_model(model, opts = {}, msg = nil)
     msg = msg.nil? ? "" : "#{msg}\n"
     m  = model.create(opts)
-    m1 = model.create(opts)
 
-    msg << "Expected #{model} to be a .plugin(:paranoid) model:\n"
-    m.deleted_at.must_be_nil(msg << "")
+    # 1. test for Paranoid plugin
+    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+    if plugs.include?("Sequel::Plugins::Paranoid")
 
-    # after update
-    m.save
-    m.deleted_at.must_be_nil
+      assert_nil(m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be NIL on new model")
 
-    # after delete
-    m1.delete
-    m1.deleted_at.must_be_nil
+      # after update
+      assert(m.save, "AssertParanoidModel:save - updated model failed. Debug: [#{m.inspect}]")
+      assert_nil(m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be NIL on updated model")
 
-    # after destroy
-    m.destroy
-    m.deleted_at.must_be_instance_of(Time)
-
+      # after destroy
+      assert(m.destroy, "AssertParanoidModel:destroy - destroy model failed. Debug: [#{m.inspect}]")
+      assert_instance_of(Time, m.deleted_at, "AssertParanoidModel:deleted_at - expected #deleted_at to be instance of Time on destroyed model, Debug: [#{m.inspect}]")
+    else
+      raise(Minitest::Assertion, "Not a plugin(:paranoid) model, available plugins are: #{plugs.inspect}")
+    end
   end
-
+  
+  
+  
+  # Test to ensure the current model is NOT a :timestamped model
   #
+  #     it { refute_timestamped_model(Post) }
   #
-  def assert_valid_model(model)
-    assert model.valid?
-    model.errors.must_be_empty
+  def refute_timestamped_model(model, msg = nil)
+    msg = msg.nil? ? "" : "#{msg}\n"
+    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+    refute_includes(plugs, "Sequel::Plugins::Timestamps", "RefuteTimestampedModel - expected #{model} to NOT be a :timestamped model, but it was, Debug: [#{plugs.inspect}]")
   end
-
+  
+  # Test to ensure the current model is NOT a :paranoid model
+  #
+  #     it { refute_paranoid_model(Post) }
+  #
+  def refute_paranoid_model(model, msg = nil)
+    msg = msg.nil? ? "" : "#{msg}\n"
+    plugs = model.instance_variable_get("@plugins").map{ |p| p.to_s }
+    refute_includes(plugs, "Sequel::Plugins::Paranoid", "RefuteParanoidModel - expected #{model} to NOT be a :paranoid model, but it was, Debug: [#{plugs.inspect}]")
+  end
+  
+    
 end
 
-# reopening to add plugins functionality
-class Minitest::Spec
 
-  #
-  #
-  def self.it_must_be_a_timestamped_model(model, &blk)
+# add support for Spec syntax
+module Minitest::Expectations
 
-    describe "#{model}.plugin(:timestamps)" do
-      before do
-        instance_exec(&blk)
-      end
+  infect_an_assertion :assert_timestamped_model,        :must_be_timestamped_model,         :reverse
+  infect_an_assertion :assert_paranoid_model,           :must_be_paranoid_model,            :reverse
+  infect_an_assertion :assert_paranoid_model,           :must_be_a_paranoid_model,          :reverse
 
-      it "#:created_at should be a timestamp on a new record" do
-        @m.created_at.must_be_instance_of(Time)
-      end
-
-      it "#:created_at should remain unchanged after an update" do
-        old_ts = @m.created_at
-        @m.created_at.must_be_instance_of(Time)
-
-        sleep 1  # TODO: convert this with timecop or similar one day.
-        @m.save
-        @m.created_at.must_equal(old_ts)
-      end
-
-      it "#:updated_at should be NULL (empty) on a new record" do
-        @m.updated_at.must_be_nil
-      end
-
-      it "#:created_at should be a timestamp on an updated record" do
-        @m.save
-        @m.updated_at.must_be_instance_of(Time)
-      end
-
-    end
-
-  end
-  #
-  #
-  def self.it_must_be_a_timestamped_model(model, &blk)
-
-    describe "#{model}.plugin(:timestamps)" do
-      before do
-        instance_exec(&blk)
-      end
-
-      it "#:created_at should be a timestamp on a new record" do
-        @m.created_at.must_be_instance_of(Time)
-      end
-
-      it "#:created_at should remain unchanged after an update" do
-        old_ts = @m.created_at
-        @m.created_at.must_be_instance_of(Time)
-
-        sleep 1  # TODO: convert this with timecop or similar one day.
-        @m.save
-        @m.created_at.must_equal(old_ts)
-      end
-
-      it "#:updated_at should be NULL (empty) on a new record" do
-        @m.updated_at.must_be_nil
-      end
-
-      it "#:created_at should be a timestamp on an updated record" do
-        @m.save
-        @m.updated_at.must_be_instance_of(Time)
-      end
-
-    end
-
-  end
-
-  #
-  #
-  def self.it_must_be_a_paranoid_model(model, &blk)
-
-    describe "#{model}.plugin(:paranoid)" do
-      before do
-        instance_exec(&blk)
-      end
-
-      it "#:deleted_at should be NULL (empty) on a new record" do
-        @m.deleted_at.must_be_nil
-      end
-
-      it "#:deleted_at should be NULL (empty) on an updated record" do
-        @m.save
-        @m.deleted_at.must_be_nil
-      end
-
-      it "#:deleted_at should be a timestamp on a destroy'ed record" do
-        @m.destroy
-        @m.deleted_at.must_be_instance_of(Time)
-      end
-
-      it "#:deleted_at should be NULL (empty) on a delete'd record" do
-        @m.delete
-        @m.deleted_at.must_be_nil
-      end
-
-    end
-
-  end
-
-  #
-  #
-  def self.verify_is_a_timestamped_model(model, opts = {})
-
-    describe "a timestamped model with .plugin(:timestamps)" do
-
-      # let (:m1) { _model.send(:make) }
-      let (:m) { model.create(opts) }
-
-      it "#:created_at should be a timestamp on a new record" do
-        m.created_at.must_be_instance_of(Time)
-      end
-
-      it "#:created_at should remain unchanged after an update" do
-        old_ts = m.created_at
-        m.created_at.must_be_instance_of(Time)
-
-        sleep 1  # TODO: convert this with timecop or similar one day.
-        m.save
-        m.created_at.must_equal(old_ts)
-      end
-
-      it "#:updated_at should be NULL (empty) on a new record" do
-        m.updated_at.must_be_nil
-      end
-
-      it "#:created_at should be a timestamp on an updated record" do
-        m.save
-        m.updated_at.must_be_instance_of(Time)
-      end
-
-    end
-
-  end
-
-  #
-  #
-  def self.verify_is_a_valid_CRUD_model(model, attr, opts = {})
-
-    describe "a valid CRUD model" do
-
-      it "can create a #{model}" do
-        # m = _model.send(:make)
-        m = model.create(opts)
-        m.must_be_instance_of(model)
-        m.errors.must_be_empty
-      end
-
-      it "can read a #{model}" do
-        # m = _model.send(:make)
-        m   = model.create(opts)
-        res = model.send :first
-        res.must_be_instance_of(model)
-        res.must_equal(m)
-      end
-
-      it "can update a #{model}" do
-        # m   = _model.send :make
-        m    = model.create(opts)
-        str = "#{m.send(_attr.to_sym)} Updated"
-        res = model.send :first
-
-        res.must_equal(m)
-        res.send("#{attr}=", str )
-        res.save
-
-        res2 = model.send :first
-        res2.send(attr.to_sym).must_equal(str)
-      end
-
-      it "can destroy a #{model}" do
-        # m = _model.send(:make)
-        m = model.create(opts)
-
-        m.deleted_at.must_be_nil
-        m.destroy
-        m.deleted_at.wont_be_nil
-        m.deleted_at.must_be_instance_of(Time)
-      end
-
-    end
-
-  end
-
-  #
-  #
-  def self.verify_is_a_paranoid_model(model, opts = {})
-
-    describe "a paranoid model with .plugin(:paranoid)" do
-
-      let (:m) { model.create(opts) }
-
-      it "#:deleted_at should be NULL (empty) on a new record" do
-        m.deleted_at.must_be_nil
-      end
-
-      it "#:deleted_at should be NULL (empty) on an updated record" do
-        m.save
-        m.deleted_at.must_be_nil
-      end
-
-      it "#:deleted_at should be a timestamp on a destroy'ed record" do
-        m.destroy
-        m.deleted_at.must_be_instance_of(Time)
-      end
-
-      it "#:deleted_at should be NULL (empty) on a delete'd record" do
-        m.delete
-        m.deleted_at.must_be_nil
-      end
-
-    end
-
-  end
-  # end
-
+  infect_an_assertion :refute_timestamped_model,        :wont_be_timestamped_model,         :reverse
+  infect_an_assertion :refute_timestamped_model,        :wont_be_a_timestamped_model,       :reverse
+  infect_an_assertion :refute_paranoid_model,           :wont_be_paranoid_model,            :reverse
+  infect_an_assertion :refute_paranoid_model,           :wont_be_a_paranoid_model,          :reverse
 end

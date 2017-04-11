@@ -526,7 +526,7 @@ This gem also contains a collection of "helpers" that aid working with Sequel mo
 
 #### `assert_timestamped_model(model, opts = {}, msg = nil)`
 
-Quickly test if a model class is timestamped with .plugin(:timestamps)
+Quickly test if a model class is timestamped with .plugin(:timestamps) with [Sequel-Timestamps](http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/Timestamps.html)
 
 
 ```ruby
@@ -554,13 +554,12 @@ Timestamps can be declared globally for all models via `Sequel::Model.plugin(:ti
 
 #### `assert_timestamped_model_instance(model, opts = {}, msg = nil)`
 
-Test if a model instance is timestamped via .plugin(:timestamps)
+Test if a model instance is timestamped with the .plugin(:timestamps) via [Sequel-Timestamps](http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/Timestamps.html)
 
 ```ruby
 let(:m) { Post.create(title: "Dummy") }
 proc { assert_timestamped_model_instance(m) }.wont_have_error
 ```
-
 
 
 You can also test if an updated record is correctly timestamped
@@ -578,6 +577,70 @@ let(:m) { Post.create(title: "Dummy", updated_at: Time.now) }
 proc { assert_timestamped_model_instance(m, updated_record: false) }.must_have_error(/expected #.updated_at to be NIL on new record/)
 ```
 
+
+<br>
+
+#### `assert_paranoid_model(model, opts = {}, msg = nil)`
+
+Test if a model class is paranoid with .plugin(:paranoid) via [Sequel-Paranoid](https://github.com/sdepold/sequel-paranoid)
+
+```ruby
+# Declared locally in the Model
+class Comment < Sequel::Model
+ plugin(:paranoid)
+end
+proc { assert_paranoid_model(Comment) }.wont_have_error
+
+# on a non-paranoid model
+class Post < Sequel::Model; end
+proc { assert_paranoid_model(Post) }.must_have_error(/Not a plugin\(:paranoid\) model, available plugins are/)
+```
+
+**NOTE!**
+
+You can also pass attributes to the created model in the tests via the `opts` hash like this:
+
+```ruby
+proc { assert_timestamped_model(Comment, {body: "I think...", email: "e@email.com"}) }.wont_have_error
+```
+
+
+<br>
+
+#### `refute_timestamped_model(model, msg = nil)`
+
+Test to ensure a model is NOT declared with .plugin(:timestamps) using [Sequel-Timestamps](http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/Timestamps.html)
+
+
+Test if a model class is paranoid with .plugin(:paranoid) via [Sequel-Paranoid](https://github.com/sdepold/sequel-paranoid)
+
+```ruby
+class Comment < Sequel::Model
+ plugin(:timestamps)
+end
+proc { refute_timestamped_model(Comment) }.must_have_error(/expected Comment to NOT be a :timestamped model, but it was/)
+
+# on a non-timestamped model
+class Post < Sequel::Model; end
+it { refute_timestamped_model(Post) }
+```
+
+<br>
+
+#### `refute_paranoid_model(model, msg = nil)`
+
+Test to ensure a model is NOT declared with .plugin(:paranoid) using [Sequel-Paranoid](https://github.com/sdepold/sequel-paranoid)
+
+```ruby
+class Comment < Sequel::Model
+ plugin(:paranoid)
+end
+proc { refute_paranoid_model(Comment) }.must_have_error(/expected Comment to NOT be a :paranoid model, but it was/)
+
+# on a non-paranoid model
+class Post < Sequel::Model; end
+it { refute_paranoid_model(Post) }
+```
 
 
 <br>

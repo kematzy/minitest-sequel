@@ -7,6 +7,7 @@ end
 $LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
 require "rubygems"
 require "sqlite3"
+# require "sequel/paranoid"
 require "minitest/autorun"
 require "minitest/sequel"
 require "minitest/assert_errors"
@@ -14,10 +15,7 @@ require "minitest/assert_errors"
 # require "minitest/color"
 # require "minitest/documentation"
 
-
-
 DB = Sequel.sqlite # :memory
-
 
 DB.create_table(:posts) do
   primary_key  :id
@@ -55,6 +53,18 @@ DB.create_table(:updated_posts) do
   # column :updated_at,   :timestamp
 end
 
+DB.create_table(:paranoid_posts) do
+  primary_key :id
+  column :category_id,  :integer, default: 1
+  column :title,        "varchar(255)"
+  column :body,         :text
+  column :author_id,    :integer
+  column :urlslug,      :string
+
+  # column :deleted_at,   :timestamp
+end
+
+
 DB.create_table(:categories) do
   primary_key  :id
   column :name,         :text
@@ -80,6 +90,7 @@ DB.create_table(:authors) do
 
   column :created_at,   :timestamp
   column :updated_at,   :timestamp
+  column :deleted_at,   :timestamp
 end
 
 DB.create_table(:dummies) do
@@ -100,6 +111,7 @@ class Post < Sequel::Model;
 end
 class CreatedPost < Sequel::Model; end
 class UpdatedPost < Sequel::Model; end
+class ParanoidPost < Sequel::Model; end
 
 class Comment < Sequel::Model; end
 
