@@ -96,7 +96,7 @@ module Minitest::Assertions
 
     unless opts[:allow_null].nil?
       v = _convert_value(opts[:allow_null])
-      expected = (col[1][:allow_null] === v)
+      expected = (dcol[1][:allow_null] === v)
       conf_msg << "allow_null: '#{opts[:allow_null]}'"
       unless expected
         err_msg << "allow_null: '#{dcol[1][:allow_null]}'"
