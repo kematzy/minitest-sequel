@@ -66,7 +66,8 @@ module Minitest::Assertions
   # 
   # 
   def assert_timestamped_model(model, opts = {})
-    m = model.create(opts)
+    m = opts.empty? ? model.send(:make) : model.send(:create, opts)
+    # m = model.create(opts)
     # 1. test for Timestamps plugin
     plugs = model.instance_variable_get("@plugins").map(&:to_s)
     if plugs.include?("Sequel::Plugins::Timestamps")
@@ -81,7 +82,7 @@ module Minitest::Assertions
       # 4. updated record
       # old_ts = m.created_at
       # sleep 1  # TODO: could this be converted to timecop or similar?
-      m.title = "#{m.title} updated"
+      # m.title = "#{m.title} updated"
       assert(m.save, "AssertTimestampedModel:#save - updated model failed. Debug: [#{m.inspect}]")
       assert_instance_of(Time, m.created_at, "AssertTimestampedModel:created_at - expected #created_at to be an instance of Time on updated record. Debug: [#{m.inspect}]")
       assert_instance_of(Time, m.updated_at, "AssertTimestampedModel:updated_at - expected #updated_at to be an instance of Time on updated record. Debug: [#{m.inspect}]")
@@ -112,7 +113,8 @@ module Minitest::Assertions
   # 
   # 
   def assert_paranoid_model(model, opts = {})
-    m = model.create(opts)
+    # m = model.create(opts)
+    m = opts.empty? ? model.send(:make) : model.send(:create, opts)
     # 1. test for Paranoid plugin
     plugs = model.instance_variable_get("@plugins").map(&:to_s)
     if plugs.include?("Sequel::Plugins::Paranoid")
@@ -148,7 +150,6 @@ module Minitest::Assertions
     refute_includes(plugs, "Sequel::Plugins::Paranoid", "RefuteParanoidModel - expected #{model} to NOT be a :paranoid model, but it was, Debug: [#{plugs.inspect}]")
   end
   
-    
 end
 
 
@@ -163,4 +164,70 @@ module Minitest::Expectations
   infect_an_assertion :refute_timestamped_model,        :wont_be_a_timestamped_model,       :reverse
   infect_an_assertion :refute_paranoid_model,           :wont_be_paranoid_model,            :reverse
   infect_an_assertion :refute_paranoid_model,           :wont_be_a_paranoid_model,          :reverse
+end
+
+
+class Minitest::Spec
+  
+  
+  def self.ensure_paranoid_model(model)
+    
+    describe "a paranoid model with .plugin(:paranoid)" do
+      
+      let(:m) { model.send(:make) }
+      
+      it "#:deleted_at should be NULL (empty) on a new record" do
+        assert_nil(m.deleted_at, "EnsureParanoidModel:new - expected #deleted_at to be nil on new record, [#{m.inspect}]")
+      end
+      
+      it "#:deleted_at should be NULL (empty) on an updated record" do
+        m.save
+        assert_nil(m.deleted_at, "EnsureParanoidModel:update - expected #deleted_at to be nil on updated record, [#{m.inspect}]")
+      end
+      
+      it "#:deleted_at should be a timestamp on a destroy'ed record" do
+        m.destroy
+        assert_instance_of(Time, m.deleted_at, "EnsureParanoidModel:destroy - expected #deleted_at to be instance of Time on destroyed model, [#{m.inspect}]")
+      end
+      
+      it "#:deleted_at should be NULL (empty) on a delete'd record" do
+        m.delete
+        assert_nil(m.deleted_at, "EnsureParanoidModel:delete - expected #deleted_at to be nil on deleted record, [#{m.inspect}]")
+      end
+      
+    end
+    
+  end
+  
+  def self.ensure_timestamped_model(model)
+    
+    describe "a timestamped model with .plugin(:timestamps)" do
+      
+      let(:m) { model.send(:make) }
+      
+      it "#:created_at should be a timestamp on a new record" do
+        assert_instance_of(Time, m.created_at, "EnsureTimestampedModel:new - expected #created_at to be an instance of Time on new record, [#{m.inspect}]")
+      end
+      
+      it "#:created_at should remain unchanged after an update" do
+        m.created_at.must_be_instance_of(Time)
+        old_ts = m.created_at
+        sleep 1  # TODO: convert this with time_cop or similar one day.
+        m.save
+        assert_equal(old_ts, m.created_at, "EnsureTimestampedModel:update - expected #created_at to be unchanged on update record, [#{m.inspect}]")
+      end
+      
+      it "#:updated_at should be NULL (empty) on a new record" do
+        assert_nil(m.updated_at, "EnsureTimestampedModel:new - expected #updated_at to be nil on new record, [#{m.inspect}]")
+      end
+      
+      it "#:created_at should be a timestamp on an updated record" do
+        m.save
+        assert_instance_of(Time, m.updated_at, "EnsureTimestampedModel:new - expected #updated_at to be an instance of Time on updated record, [#{m.inspect}]")
+      end
+      
+    end
+    
+  end
+  
 end

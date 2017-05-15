@@ -392,8 +392,8 @@ alias: `:assert_validates_format_of`
 Test for validating the format of a model's attribute with a regexp.
 
 ```ruby
-it { assert_validates_format(model, :title, 12, { with: /[a-z+]/ }) }
-it { model.must_validate_format_of(:title, 12, { with: /[a-z]+/ }) }
+it { assert_validates_format(model, :title, { with: /[a-z+]/ }) }
+it { model.must_validate_format_of(:title, { with: /[a-z]+/ }) }
 ```
 
 <br>
