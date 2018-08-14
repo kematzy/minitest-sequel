@@ -1,4 +1,5 @@
 # require "minitest/sequel"
+require 'minitest/spec'
 
 # reopening to add schema validation functionality
 module Minitest::Assertions
