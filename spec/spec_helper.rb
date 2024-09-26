@@ -1,10 +1,14 @@
-ENV["RACK_ENV"] = "test"
+# frozen_string_literal: true
+
+ENV['RACK_ENV'] = 'test'
+
 if ENV["COVERAGE"]
   require File.join(File.dirname(File.expand_path(__FILE__)), "minitest_sequel_coverage")
   SimpleCov.minitest_sequel_coverage
 end
 
-$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+
 require "rubygems"
 require "sqlite3"
 # require "sequel/paranoid"
@@ -12,9 +16,8 @@ require "minitest/autorun"
 require "minitest/sequel"
 require "minitest/hooks/default"
 require "minitest/assert_errors"
-# require "minitest/rg"
-# require "minitest/color"
-# require "minitest/documentation"
+require "minitest/rg"
+
 
 DB = Sequel.sqlite # :memory
 
@@ -122,9 +125,8 @@ class Category < Sequel::Model; end
 
 class Dummy < Sequel::Model; end
 
-
 class Minitest::HooksSpec
-  
+
   around(:all) do |&block|
     DB.transaction(rollback: :always) { super(&block) }
   end
