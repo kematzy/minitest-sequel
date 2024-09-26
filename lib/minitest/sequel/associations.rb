@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 # require "minitest/sequel"
 
 # reopening to add association functionality
 module Minitest::Assertions
-
   # Test for a :one_to_one association for the current model
   #
   #     let(:m) { Post.first }
@@ -52,7 +53,7 @@ module Minitest::Assertions
   #     it { assert_association(Post, :many_to_many, :tags) }
   #
   def assert_association(klass, association_type, attribute, opts = {}, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
+    msg = msg.nil? ? '' : "#{msg}\n"
     msg << "Expected #{klass.inspect} to have a #{association_type.inspect}"
     msg << " association #{attribute.inspect}"
     assoc = klass.association_reflection(attribute) || {}
@@ -61,23 +62,23 @@ module Minitest::Assertions
       arr = []
       klass.associations.each do |a|
         o = klass.association_reflection(a)
-        if o[:type] == :many_to_many
-          arr << {
-            attribute:    o[:name],
-            type:         o[:type],
-            class:        o[:class_name].to_s,
-            join_table:   o[:join_table],
-            left_keys:    o[:left_keys],
-            right_keys:   o[:right_keys]
-          }
-        else
-          arr << {
-            attribute:  o[:name],
-            type:       o[:type],
-            class:      o[:class_name].to_s,
-            keys:       o[:keys]
-          }
-        end
+        arr << if o[:type] == :many_to_many
+                 {
+                   attribute: o[:name],
+                   type: o[:type],
+                   class: o[:class_name].to_s,
+                   join_table: o[:join_table],
+                   left_keys: o[:left_keys],
+                   right_keys: o[:right_keys]
+                 }
+               else
+                 {
+                   attribute: o[:name],
+                   type: o[:type],
+                   class: o[:class_name].to_s,
+                   keys: o[:keys]
+                 }
+               end
       end
       msg << " - \navailable associations are: [ #{arr.join(', ')} ]\n"
       assert(false, msg)
@@ -96,7 +97,6 @@ module Minitest::Assertions
       assert(matching, msg)
     end
   end
-
 
   # Test to ensure there is no :one_to_one association for the current model
   #
@@ -147,7 +147,7 @@ module Minitest::Assertions
   #     it { refute_association(Post, :many_to_many, :tags) }
   #
   def refute_association(klass, association_type, attribute, msg = nil)
-    msg = msg.nil? ? "" : "#{msg}\n"
+    msg = msg.nil? ? '' : "#{msg}\n"
     msg << "Expected #{klass.inspect} to NOT have a #{association_type.inspect}"
     msg << " association #{attribute.inspect}"
     assoc = klass.association_reflection(attribute) || {}
@@ -156,17 +156,14 @@ module Minitest::Assertions
       assert(true, msg)
     else
       matching = false if assoc[:type] == association_type
-      msg << ", but such an association was found"
+      msg << ', but such an association was found'
       assert(matching, msg)
     end
   end
-
 end
-
 
 # add support for Spec syntax
 module Minitest::Expectations
-
   infect_an_assertion :assert_association,              :must_have_association,             :reverse
   infect_an_assertion :assert_association_one_to_one,   :must_have_one_to_one_association,  :reverse
   infect_an_assertion :assert_association_one_to_many,  :must_have_one_to_many_association, :reverse
@@ -178,5 +175,4 @@ module Minitest::Expectations
   infect_an_assertion :refute_association_one_to_many,  :wont_have_one_to_many_association, :reverse
   infect_an_assertion :refute_association_many_to_one,  :wont_have_many_to_one_association, :reverse
   infect_an_assertion :refute_association_many_to_many, :wont_have_many_to_many_association, :reverse
-
 end
