@@ -48,9 +48,17 @@ group :development do
   # DOCS: https://github.com/rubocop/rubocop-rake
   gem 'rubocop-rake', require: false
 
+  # SQLite3 interface for Ruby
+  # DOCS: https://github.com/sparklemotion/sqlite3-ruby
+  gem 'sqlite3'
+
   # Code coverage for Ruby
   # DOCS: https://github.com/simplecov-ruby/simplecov
   gem 'simplecov'
+
+  # A Ruby language server that provides intellisense, code completion, and inline documentation
+  # DOCS: https://github.com/castwide/solargraph
+  gem 'solargraph'
 end
 
 # Linux-specific gems
