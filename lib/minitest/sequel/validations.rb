@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-# require "minitest/sequel"
+# frozen_string_literal: false
 
 # reopening to add validations functionality
 module Minitest::Assertions

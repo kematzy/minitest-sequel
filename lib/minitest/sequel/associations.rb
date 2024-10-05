@@ -1,6 +1,5 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
-# require "minitest/sequel"
 
 # reopening to add association functionality
 module Minitest::Assertions
