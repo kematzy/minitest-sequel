@@ -1,13 +1,15 @@
-require "coverage"
-require "simplecov"
+# frozen_string_literal: true
 
-def SimpleCov.minitest_sequel_coverage(opts = {})
+require 'coverage'
+require 'simplecov'
+
+def SimpleCov.minitest_sequel_coverage(_opts = {})
   start do
-    add_filter "/spec/"
-    add_group("Missing") { |src| src.covered_percent < 100 }
-    add_group("Covered") { |src| src.covered_percent == 100 }
+    add_filter '/spec/'
+    add_group('Missing') { |src| src.covered_percent < 100 }
+    add_group('Covered') { |src| src.covered_percent == 100 }
     yield self if block_given?
   end
 end
 
-ENV.delete("COVERAGE")
+ENV.delete('COVERAGE')
