@@ -97,7 +97,7 @@ module Minitest
     #
     # @raise [Minitest::Assertion] If the assertions fail.
     #
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def assert_crud_can_destroy(model)
       # Create a new instance of the model
       m = model.send(:make)
@@ -136,7 +136,7 @@ module Minitest
         assert_nil(res, msg)
       end
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
   end
   # /module Assertions
 end
