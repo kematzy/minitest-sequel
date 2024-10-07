@@ -26,7 +26,23 @@ Metrics/BlockLength:
     - "spec/**/*.rb"
     - "**/*.gemspec"
 
+Metrics/ModuleLength:
+  Enabled: true
+  Exclude:
+    - "lib/minitest/sequel/validations.rb"
+
 Style/Documentation:
   Exclude:
     - "spec/**/*"
     - "test/**/*"
+
+Style/RegexpLiteral:
+  Enabled: true
+  EnforcedStyle: slashes
+  # AllowInnerSlashes: false
+
+Layout/LineLength:
+  Enabled: true
+  Max: 100
+  Exclude:
+    - "**/*.gemspec"
