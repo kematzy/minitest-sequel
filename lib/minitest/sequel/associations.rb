@@ -139,10 +139,11 @@ module Minitest
     #
     # @return [Boolean] true if the assertion passes, raises an error otherwise
     #
+    # rubocop:disable Metrics/*
     def assert_association(klass, association_type, attribute, opts = {}, msg = nil)
       # Initialize error message
       msg = msg.nil? ? '' : "#{msg}\n"
-      msg << "Expected #{klass.inspect} to have a #{association_type.inspect}"
+      msg << "Expected #{klass} to have a #{association_type.inspect}"
       msg << " association #{attribute.inspect}"
 
       # Get association reflection or empty hash if not found
@@ -150,29 +151,29 @@ module Minitest
 
       if assoc.empty?
         # Association not found, prepare error message with available associations
-        msg << " but no association '#{attribute.inspect}' was found"
+        msg << ", but no association '#{attribute.inspect}' was found"
         arr = []
         klass.associations.each do |a|
           o = klass.association_reflection(a)
           arr << if o[:type] == :many_to_many
-                  # Prepare info for many-to-many association
-                  {
-                    attribute: o[:name],
-                    type: o[:type],
-                    class: o[:class_name].to_s,
-                    join_table: o[:join_table],
-                    left_keys: o[:left_keys],
-                    right_keys: o[:right_keys]
-                  }
-                else
-                  # Prepare info for other association types
-                  {
-                    attribute: o[:name],
-                    type: o[:type],
-                    class: o[:class_name].to_s,
-                    keys: o[:keys]
-                  }
-                end
+                   # Prepare info for many-to-many association
+                   {
+                     attribute: o[:name],
+                     type: o[:type],
+                     class: o[:class_name].to_s,
+                     join_table: o[:join_table],
+                     left_keys: o[:left_keys],
+                     right_keys: o[:right_keys]
+                   }
+                 else
+                   # Prepare info for other association types
+                   {
+                     attribute: o[:name],
+                     type: o[:type],
+                     class: o[:class_name].to_s,
+                     keys: o[:keys]
+                   }
+                 end
         end
         # /klass.associations.each
 
@@ -198,6 +199,7 @@ module Minitest
         assert(matching, msg)
       end
     end
+    # rubocop:enable Metrics/*
 
     # Test to ensure there is no :one_to_one association for the current model
     #
@@ -329,6 +331,7 @@ module Minitest
     #
     # @return [Boolean] true if the assertion passes, raises an error otherwise
     #
+    # rubocop:disable Metrics/MethodLength
     def refute_association(klass, association_type, attribute, msg = nil)
       msg = msg.nil? ? '' : "#{msg}\n"
       msg << "Expected #{klass.inspect} to NOT have a #{association_type.inspect}"
@@ -343,10 +346,12 @@ module Minitest
         assert(matching, msg)
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
   # /module Assertions
 
   # add support for Spec syntax
+  # rubocop:disable Layout/LineLength
   module Expectations
     infect_an_assertion :assert_association,              :must_have_association,             :reverse
     infect_an_assertion :assert_association_one_to_one,   :must_have_one_to_one_association,  :reverse
@@ -360,4 +365,5 @@ module Minitest
     infect_an_assertion :refute_association_many_to_one,  :wont_have_many_to_one_association, :reverse
     infect_an_assertion :refute_association_many_to_many, :wont_have_many_to_many_association, :reverse
   end
+  # rubocop:enable Layout/LineLength
 end

@@ -40,6 +40,7 @@ module Minitest
     #   `:true`, or `:false` symbols respectively. For numeric values,
     #   provide them as strings.
     #
+    # rubocop:disable Metrics/MethodLength
     def assert_have_column(obj, attribute, opts = {}, msg = nil)
       # Prepare the error message
       msg = build_message_column(obj, attribute, msg)
@@ -69,6 +70,7 @@ module Minitest
       msg << " with: { #{msg_conf.join(', ')} } but found: { #{msg_err.join(', ')} }"
       assert(matching, msg)
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Asserts that a given model does not have a specific column
     #
@@ -142,10 +144,10 @@ module Minitest
     #   bail_unless_column_exists(column_info, error_message)
     #
     def bail_unless_column_exists(dbcol, msg)
-      unless dbcol
-        msg << ' but no such column exists'
-        assert(false, msg)
-      end
+      return if dbcol
+
+      msg << ' but no such column exists'
+      assert(false, msg)
     end
 
     # Bail if the options passed to #assert_have_column are invalid
@@ -161,13 +163,13 @@ module Minitest
       valid_opts = %i[type db_type allow_null default primary_key auto_increment max_length]
       invalid_opts = opts.keys.reject { |o| valid_opts.include?(o) }
 
-      unless invalid_opts.empty?
-        msg << ', but the following invalid option(s) was found: { '
-        msg << invalid_opts.map(&:inspect).join(', ')
-        msg << " }. Valid options are: #{valid_opts.inspect}"
+      return if invalid_opts.empty?
 
-        assert(false, msg)
-      end
+      msg << ', but the following invalid option(s) was found: { '
+      msg << invalid_opts.map(&:inspect).join(', ')
+      msg << " }. Valid options are: #{valid_opts.inspect}"
+
+      assert(false, msg)
     end
 
     # Compares the actual column attribute with the expected value
@@ -183,9 +185,9 @@ module Minitest
       when :type, :db_type
         dbcol[1][key].to_s == value.to_s
       when :allow_null, :default, :primary_key, :auto_increment
-        dbcol[1][key] === _convert_value(value)
+        dbcol[1][key] == _convert_value(value)
       when :max_length
-        dbcol[1][key] === value
+        dbcol[1][key] == value
       end
     end
 
@@ -201,11 +203,13 @@ module Minitest
     # @example
     #   update_messages(msg_conf, msg_err, :type, 'string', column_info, true)
     #
+    # rubocop:disable Metrics/ParameterLists
     def update_messages(msg_conf, msg_err, key, value, dbcol, expected)
       msg_conf << "#{key}: '#{value}'"
       val = key == 'default' ? dbcol[1][key].inspect : dbcol[1][key]
       msg_err << "#{key}: '#{val}'" unless expected
     end
+    # rubocop:enable Metrics/ParameterLists
   end
   # /module Assertions
 

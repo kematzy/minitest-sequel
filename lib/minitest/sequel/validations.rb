@@ -3,6 +3,7 @@
 # reopening to add validations functionality
 module Minitest
   # add support for Assert syntax
+  # rubocop:disable Metrics/ModuleLength
   module Assertions
     # Test for validating presence of a model attribute
     #
@@ -42,18 +43,21 @@ module Minitest
     #
     # Available options:
     #
-    # * :message - The message to use (no default, overrides :nil_message, :too_long, :too_short, and :wrong_length options if present)
-    # * :nil_message - The message to use if :maximum option is used and the value is nil (default: 'is not present')
+    # * :message - The message to use (no default, overrides :nil_message, :too_long,
+    #               :too_short, and :wrong_length options if present)
+    # * :nil_message - The message to use if :maximum option is used and the value is nil
+    #     (default: 'is not present')
     # * :too_long - The message to use if the value is too long (default: 'is too long')
     # * :too_short - The message to use if the value is too short (default: 'is too short')
-    # * :wrong_length - The message to use if the value is not valid (default: 'is the wrong length')
+    # * :wrong_length - The message to use if the value is not valid
+    #     (default: 'is the wrong length')
     #
     # Size related options:
     #
     # * :is - The exact size required for the value to be valid (no default)
     # * :minimum - The minimum size allowed for the value (no default)
     # * :maximum - The maximum size allowed for the value (no default)
-    # * :within - The array/range that must include the size of the value for it to be valid (no default)
+    # * :within - The array/range that must include the size of value for the value (no default)
     #
     # @example Using assertion style
     #   assert_validates_length(model, :title, { maximum: 12 })
@@ -79,13 +83,22 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   assert_validates_exact_length(model, :title, 12, { message: 'Must be exactly 12 characters' })
+    #   assert_validates_exact_length(
+    #     model,
+    #     :title,
+    #     12,
+    #     { message: 'Must be exactly 12 characters' }
+    #   )
     #
     # @example Using expectation style
-    #   model.must_validate_exact_length_of(:title, 12, { message: 'Must be exactly 12 characters' })
+    #   model.must_validate_exact_length_of(
+    #     :title,
+    #     12,
+    #     { message: 'Must be exactly 12 characters' }
+    #   )
     #
     def assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)
-      opts.merge!(is: exact_length)
+      opts[:is] = exact_length
       assert_validates(obj, :length, attribute, opts, msg)
     end
     alias assert_validates_exact_length_of assert_validates_exact_length
@@ -103,13 +116,22 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   assert_validates_length_range(model, :title, 4..12, { message: 'Title must be between 4 and 12 characters' })
+    #   assert_validates_length_range(
+    #     model,
+    #     :title,
+    #     4..12,
+    #     { message: 'Title must be between 4 and 12 characters' }
+    #   )
     #
     # @example Using expectation style
-    #   model.must_validate_length_range_of(:title, 4..12, { message: 'Title must be between 4 and 12 characters' })
+    #   model.must_validate_length_range_of(
+    #     :title,
+    #     4..12,
+    #     { message: 'Title must be between 4 and 12 characters' }
+    #   )
     #
     def assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)
-      opts.merge!(within: range)
+      opts[:within] = range
       assert_validates(obj, :length, attribute, opts, msg)
     end
     alias assert_validates_length_range_of assert_validates_length_range
@@ -133,7 +155,7 @@ module Minitest
     #   model.must_validate_max_length_of(:title, 12, { message: 'Title is too long' })
     #
     def assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)
-      opts.merge!(maximum: max_length)
+      opts[:maximum] = max_length
       assert_validates(obj, :length, attribute, opts, msg)
     end
     alias assert_validates_max_length_of assert_validates_max_length
@@ -157,7 +179,7 @@ module Minitest
     #   model.must_validate_min_length_of(:title, 12, { message: 'Title is too short' })
     #
     def assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)
-      opts.merge!(minimum: min_length)
+      opts[:minimum] = min_length
       assert_validates(obj, :length, attribute, opts, msg)
     end
     alias assert_validates_min_length_of assert_validates_min_length
@@ -182,7 +204,11 @@ module Minitest
     #   model.must_validate_format_of(:title, { with: /[a-z]+/ })
     #
     # @example With custom error message
-    #   assert_validates_format(model, :title, { with: /[a-z]+/, message: 'must contain only lowercase letters' })
+    #   assert_validates_format(
+    #     model,
+    #     :title,
+    #     { with: /[a-z]+/, message: 'must contain only lowercase letters' }
+    #   )
     #
     def assert_validates_format(obj, attribute, opts = {}, msg = nil)
       assert_validates(obj, :format, attribute, opts, msg)
@@ -209,7 +235,11 @@ module Minitest
     #   model.must_validate_inclusion_of(:status, { in: [:a, :b, :c] })
     #
     # @example With custom error message
-    #   assert_validates_inclusion(model, :status, { in: [:a, :b, :c], message: 'must be a valid status' })
+    #   assert_validates_inclusion(
+    #     model,
+    #     :status,
+    #     { in: [:a, :b, :c], message: 'must be a valid status' }
+    #   )
     #
     def assert_validates_inclusion(obj, attribute, opts = {}, msg = nil)
       assert_validates(obj, :inclusion, attribute, opts, msg)
@@ -234,7 +264,7 @@ module Minitest
     #   model.must_validate_integer_of(:author_id, { message: 'must be an integer' })
     #
     def assert_validates_integer(obj, attribute, opts = {}, msg = nil)
-      opts.merge!(only_integer: true)
+      opts[:only_integer] = true
       assert_validates(obj, :numericality, attribute, opts, msg)
     end
 
@@ -256,7 +286,11 @@ module Minitest
     #   model.must_validate_numericality_of(:price, { less_than_or_equal_to: 1000 })
     #
     # @example With custom error message
-    #   assert_validates_numericality(model, :quantity, { only_integer: true, message: 'must be a whole number' })
+    #   assert_validates_numericality(
+    #     model,
+    #     :quantity,
+    #     { only_integer: true, message: 'must be a whole number' }
+    #   )
     #
     def assert_validates_numericality(obj, attribute, opts = {}, msg = nil)
       assert_validates(obj, :numericality, attribute, opts, msg)
@@ -281,14 +315,19 @@ module Minitest
     #   model.must_validate_uniqueness_of(:urlslug, { case_sensitive: false })
     #
     # @example With custom error message
-    #   assert_validates_uniqueness(model, :email, { scope: :account_id, message: 'already taken for this account' })
+    #   assert_validates_uniqueness(
+    #     model,
+    #     :email,
+    #     { scope: :account_id, message: 'already taken for this account' }
+    #   )
     #
     def assert_validates_uniqueness(obj, attribute, opts = {}, msg = nil)
       assert_validates(obj, :uniqueness, attribute, opts, msg)
     end
     alias assert_validates_uniqueness_of assert_validates_uniqueness
 
-    # Validates acceptance of an attribute. Just checks that the value is equal to the :accept option. This method is unique in that :allow_nil is assumed to be true instead of false.
+    # Validates acceptance of an attribute. Just checks that the value is equal to the :accept
+    # option. This method is unique in that :allow_nil is assumed to be true instead of false.
 
     # Test for validating the acceptance of a model's attribute.
     #
@@ -302,7 +341,11 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   assert_validates_acceptance(Order.new, :toc, { message: 'You must accept the terms and conditions' })
+    #   assert_validates_acceptance(
+    #     Order.new,
+    #     :toc,
+    #     { message: 'You must accept the terms and conditions' }
+    #   )
     #
     # @example Using expectation style
     #   model.must_validate_acceptance_of(:toc, { accept: 'yes' })
@@ -342,11 +385,13 @@ module Minitest
 
     # Base test for validations of a model, used mainly as a shortcut for other assertions
     #
-    # This method checks if the specified attribute of the given object has the expected validation type
-    # and options. It can be used to test various validation types such as presence, format, length, etc.
+    # This method checks if the specified attribute of the given object has the expected
+    # validation type and options. It can be used to test various validation types such as
+    # ;presence, :format, :length, etc.
     #
     # @param obj [Object] The model object to test
-    # @param validation_type [Symbol] The type of validation to check (e.g., :presence, :format, :length)
+    # @param validation_type [Symbol] The type of validation to check
+    #                                 (e.g., :presence, :format, :length)
     # @param attribute [Symbol] The attribute to check for validation
     # @param opts [Hash] Additional options for the validation (default: {})
     # @param msg [String] Custom error message (default: nil)
@@ -359,11 +404,15 @@ module Minitest
     #
     # @raise [Minitest::Assertion] If the validation does not match the expected criteria
     #
+    # rubocop:disable Metrics/*
     def assert_validates(obj, validation_type, attribute, opts = {}, msg = nil)
       msg = msg.nil? ? '' : "#{msg}\n"
       err_msg  = []
       conf_msg = []
-      assert(false, "Column :#{attribute} is not defined in #{obj.class}") unless obj.respond_to?(attribute)
+
+      unless obj.respond_to?(attribute)
+        assert(false, "Column :#{attribute} is not defined in #{obj.class}")
+      end
 
       msg << "Expected #{obj.class} to validate :#{validation_type} for :#{attribute} column"
 
@@ -410,6 +459,7 @@ module Minitest
         assert(false, "No validations defined in #{obj.class}")
       end
     end
+    # rubocop:enable Metrics/*
 
     # Test for refuting the presence validation of a model attribute
     #
@@ -455,7 +505,8 @@ module Minitest
     #                 (default: 'is not present')
     # :too_long    :: The message to use if the value is too long (default: 'is too long')
     # :too_short   :: The message to use if the value is too short (default: 'is too short')
-    # :wrong_length :: The message to use if the value is not valid (default: 'is the wrong length')
+    # :wrong_length :: The message to use if the value is not valid
+    #                   (default: 'is the wrong length')
     #
     # Size related options:
     #
@@ -472,7 +523,12 @@ module Minitest
     #   model.wont_validate_length_of(:title, { within: 4..12 })
     #
     # @example With custom error message
-    #   refute_validates_length(model, :title, { maximum: 12 }, "Title should not have length validation")
+    #   refute_validates_length(
+    #     model,
+    #     :title,
+    #     { maximum: 12 },
+    #     "Title should not have length validation"
+    #   )
     #
     def refute_validates_length(obj, attribute, opts = {}, msg = nil)
       refute_validates(obj, :length, attribute, opts, msg)
@@ -492,13 +548,23 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   refute_validates_exact_length(model, :title, 12, { message: 'Must not be exactly 12 characters' })
+    #   refute_validates_exact_length(
+    #     model,
+    #     :title,
+    #     12,
+    #     { message: 'Must not be exactly 12 characters' }
+    #   )
     #
     # @example Using expectation style
-    #   model.wont_validate_exact_length_of(:title, 12, { message: 'Must not be exactly 12 characters' })
+    #   model.wont_validate_exact_length_of(
+    #     :title,
+    #     12,
+    #     { message: 'Must not be exactly 12 characters' }
+    #   )
     #
     def refute_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)
-      opts.merge!(is: exact_length)
+      # opts.merge!(is: exact_length)
+      opts[:is] = exact_length
       refute_validates(obj, :length, attribute, opts, msg)
     end
     alias refute_validates_exact_length_of refute_validates_exact_length
@@ -516,13 +582,22 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   refute_validates_length_range(model, :title, 4..12, { message: 'Title length must not be between 4 and 12 characters' })
+    #   refute_validates_length_range(
+    #     model,
+    #     :title,
+    #     4..12,
+    #     { message: 'Title length must not be between 4 and 12 characters' }
+    #   )
     #
     # @example Using expectation style
-    #   model.wont_validate_length_range_of(:title, 4..12, { message: 'Title length must not be between 4 and 12 characters' })
+    #   model.wont_validate_length_range_of(
+    #     :title,
+    #     4..12,
+    #     { message: 'Title length must not be between 4 and 12 characters' }
+    #   )
     #
     def refute_validates_length_range(obj, attribute, range, opts = {}, msg = nil)
-      opts.merge!(within: range)
+      opts[:within] = range
       refute_validates(obj, :length, attribute, opts, msg)
     end
     alias refute_validates_length_range_of refute_validates_length_range
@@ -540,13 +615,22 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   refute_validates_max_length(model, :title, 12, { message: 'Title should not have maximum length validation' })
+    #   refute_validates_max_length(
+    #     model,
+    #     :title,
+    #     12,
+    #     { message: 'Title should not have maximum length validation' }
+    #   )
     #
     # @example Using expectation style
-    #   model.wont_validate_max_length_of(:title, 12, { message: 'Title should not have maximum length validation' })
+    #   model.wont_validate_max_length_of(
+    #     :title,
+    #     12,
+    #     { message: 'Title should not have maximum length validation' }
+    #   )
     #
     def refute_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)
-      opts.merge!(maximum: max_length)
+      opts[:maximum] = max_length
       refute_validates(obj, :length, attribute, opts, msg)
     end
     alias refute_validates_max_length_of refute_validates_max_length
@@ -564,13 +648,22 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   refute_validates_min_length(model, :title, 12, { message: 'Title should not have minimum length validation' })
+    #   refute_validates_min_length(
+    #     model,
+    #     :title,
+    #     12,
+    #     { message: 'Title should not have minimum length validation' }
+    #   )
     #
     # @example Using expectation style
-    #   model.wont_validate_min_length_of(:title, 12, { message: 'Title should not have minimum length validation' })
+    #   model.wont_validate_min_length_of(
+    #     :title,
+    #     12,
+    #     { message: 'Title should not have minimum length validation' }
+    #   )
     #
     def refute_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)
-      opts.merge!(minimum: min_length)
+      opts[:minimum] = min_length
       refute_validates(obj, :length, attribute, opts, msg)
     end
     alias refute_validates_min_length_of refute_validates_min_length
@@ -595,7 +688,12 @@ module Minitest
     #   model.wont_validate_format_of(:title, { with: /[a-z]+/ })
     #
     # @example With custom error message
-    #   refute_validates_format(model, :title, { with: /[a-z]+/ }, "Title should not have format validation")
+    #   refute_validates_format(
+    #     model,
+    #     :title,
+    #     { with: /[a-z]+/ },
+    #     "Title should not have format validation"
+    #   )
     #
     def refute_validates_format(obj, attribute, opts = {}, msg = nil)
       refute_validates(obj, :format, attribute, opts, msg)
@@ -622,7 +720,12 @@ module Minitest
     #   model.wont_validate_inclusion_of(:status, { in: [:a, :b, :c] })
     #
     # @example With custom error message
-    #   refute_validates_inclusion(model, :status, { in: [:a, :b, :c] }, "Status should not be limited to these values")
+    #   refute_validates_inclusion(
+    #     model,
+    #     :status,
+    #     { in: [:a, :b, :c] },
+    #     "Status should not be limited to these values"
+    #   )
     #
     def refute_validates_inclusion(obj, attribute, opts = {}, msg = nil)
       refute_validates(obj, :inclusion, attribute, opts, msg)
@@ -647,7 +750,7 @@ module Minitest
     #   model.wont_validate_integer_of(:author_id, { message: 'must not be an integer' })
     #
     def refute_validates_integer(obj, attribute, opts = {}, msg = nil)
-      opts.merge!(only_integer: true)
+      opts[:only_integer] = true
       refute_validates(obj, :numericality, attribute, opts, msg)
     end
 
@@ -669,7 +772,11 @@ module Minitest
     #   model.wont_validate_numericality_of(:price, { less_than_or_equal_to: 1000 })
     #
     # @example With custom error message
-    #   refute_validates_numericality(model, :quantity, { only_integer: true, message: 'must not be a number' })
+    #   refute_validates_numericality(
+    #     model,
+    #     :quantity,
+    #     { only_integer: true, message: 'must not be a number' }
+    #   )
     #
     def refute_validates_numericality(obj, attribute, opts = {}, msg = nil)
       refute_validates(obj, :numericality, attribute, opts, msg)
@@ -694,7 +801,12 @@ module Minitest
     #   model.wont_validate_uniqueness_of(:urlslug, { case_sensitive: false })
     #
     # @example With custom error message
-    #   refute_validates_uniqueness(model, :email, { scope: :account_id }, "Email should not be unique within an account")
+    #   refute_validates_uniqueness(
+    #     model,
+    #     :email,
+    #     { scope: :account_id },
+    #     "Email should not be unique within an account"
+    #   )
     #
     def refute_validates_uniqueness(obj, attribute, opts = {}, msg = nil)
       refute_validates(obj, :uniqueness, attribute, opts, msg)
@@ -739,10 +851,17 @@ module Minitest
     # @param msg [String] Custom error message (default: nil)
     #
     # @example Using assertion style
-    #   refute_validates_confirmation(User.new, :password, { message: 'should not require confirmation' })
+    #   refute_validates_confirmation(
+    #     User.new,
+    #     :password,
+    #     { message: 'should not require confirmation' }
+    #   )
     #
     # @example Using expectation style
-    #   User.new.wont_validate_confirmation_of(:password, { message: 'should not require confirmation' })
+    #   User.new.wont_validate_confirmation_of(
+    #     :password,
+    #     { message: 'should not require confirmation' }
+    #   )
     #
     # @note The confirmation validation is typically used for password fields
     #       where the user needs to enter the same password twice. This method
@@ -773,11 +892,14 @@ module Minitest
     #
     # @raise [Minitest::Assertion] If the validation exists when it should not
     #
+    # rubocop:disable Metrics/MethodLength
     def refute_validates(obj, validation_type, attribute, _opts = {}, msg = nil)
       msg = msg.nil? ? '' : "#{msg}\n"
+
       unless obj.respond_to?(attribute)
         assert(false, "Column :#{attribute} is not defined in #{obj.class}, so cannot be validated")
       end
+
       msg << "Expected #{obj.class} NOT to validate :#{attribute} with :#{validation_type}"
       if _validated_model?(obj)
         if _validated_column?(obj, attribute)
@@ -790,6 +912,7 @@ module Minitest
         assert(false, "No validations defined in #{obj.class}")
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Test that saving an object raises a ValidationFailed error
     #
@@ -811,7 +934,6 @@ module Minitest
       assert_raises(::Sequel::ValidationFailed) { obj.save }
     end
     alias assert_fails_validation assert_raises_validation_failed
-
 
     private
 
@@ -845,12 +967,13 @@ module Minitest
     def _validated_column?(model, attribute)
       return false unless _validated_model?(model)
 
-      model.class.validation_reflections.keys.include?(attribute.to_sym)
+      model.class.validation_reflections.key?(attribute.to_sym)
     end
 
     # Check if a specific attribute of the model has a specific validation type
     #
-    # This method determines whether the given attribute of the model has the specified validation type.
+    # This method determines whether the given attribute of the model has the specified
+    # validation type.
     #
     # @param model [Object] The model object to check for validations
     # @param attribute [Symbol, String] The attribute to check for validations
@@ -865,7 +988,7 @@ module Minitest
     def _validated_with_validation_type?(model, attribute, validation_type)
       return false unless _validated_column?(model, attribute)
 
-      _validation_types_hash_for_column(model, attribute).keys.include?(validation_type)
+      _validation_types_hash_for_column(model, attribute).key?(validation_type)
     end
 
     # Get a hash of validation types and their options for a specific attribute
@@ -896,7 +1019,16 @@ module Minitest
     #
     # @example
     #   _available_validation_types
-    #   #=> [:format, :length, :presence, :numericality, :confirmation, :acceptance, :inclusion, :uniqueness]
+    #   #=> [
+    #     :format,
+    #     :length,
+    #     :presence,
+    #     :numericality,
+    #     :confirmation,
+    #     :acceptance,
+    #     :inclusion,
+    #     :uniqueness
+    #   ]
     #
     def _available_validation_types
       %i[format length presence numericality confirmation acceptance inclusion uniqueness]
@@ -912,7 +1044,11 @@ module Minitest
     #
     # @example
     #   _available_validation_options
-    #   #=> [:message, :if, :is, :in, :allow_blank, :allow_missing, :allow_nil, :accept, :with, :within, :only_integer, :maximum, :minimum, :nil_message, :too_long, :too_short, :wrong_length]
+    #   #=> [
+    #     :message, :if, :is, :in, :allow_blank, :allow_missing, :allow_nil, :accept, :with,
+    #     :within, :only_integer, :maximum, :minimum, :nil_message, :too_long, :too_short,
+    #     :wrong_length
+    #   ]
     #
     def _available_validation_options
       %i[
@@ -932,8 +1068,12 @@ module Minitest
     #
     # @example
     #   _valid_validation_options(:length)
-    #   #=> [:message, :is, :maximum, :minimum, :nil_message, :too_long, :too_short, :within, :wrong_length]
+    #   #=> [
+    #     :message, :is, :maximum, :minimum, :nil_message,
+    #     :too_long, :too_short, :within, :wrong_length
+    #   ]
     #
+    # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
     def _valid_validation_options(type = nil)
       arr = [:message]
       unless type.nil?
@@ -967,7 +1107,7 @@ module Minitest
           # :is         :: The exact size required for the value to be valid (no default)
           # :minimum    :: The minimum size allowed for the value (no default)
           # :maximum    :: The maximum size allowed for the value (no default)
-          # :within     :: The array/range that must include the size of the value for it to be valid
+          # :within     :: The array/range that must include size of the value for it to be valid
           #                 (no default)
 
           %i[is maximum minimum nil_message too_long too_short within wrong_length].each do |a|
@@ -979,8 +1119,10 @@ module Minitest
       end
       arr
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity
   end
   # /module Assertions
+  # rubocop:enable Metrics/ModuleLength
 
   # add support for Spec syntax
   module Expectations
