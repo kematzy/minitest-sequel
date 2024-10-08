@@ -4,6 +4,8 @@
 
 [![Ruby](https://github.com/kematzy/minitest-sequel/actions/workflows/ruby.yml/badge.svg?branch=master)](https://github.com/kematzy/minitest-sequel/actions/workflows/ruby.yml) - [![Gem Version](https://badge.fury.io/rb/minitest-sequel.svg)](https://badge.fury.io/rb/minitest-sequel) - [![Minitest Style Guide](https://img.shields.io/badge/code_style-rubocop-brightgreen.svg)](https://github.com/rubocop/rubocop-minitest)
 
+Coverage: Currently at **99.1%**
+
 [Minitest](https://github.com/seattlerb/minitest) assertions to speed-up development and testing
 of [Sequel](http://sequel.jeremyevans.net/) database setups.
 
