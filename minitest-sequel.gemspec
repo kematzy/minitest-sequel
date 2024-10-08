@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
                         'Minitest::Sequel: assertions for testing Sequel databases', '--main', 'README.md']
 
   spec.add_dependency('minitest', '~> 5.25.0', '>= 5.20.0')
-  spec.add_dependency('sequel', '~> 5.84.0', '>= 5.80.0')
+  spec.add_dependency('sequel', '>= 5.84', '< 5.86')
   spec.add_dependency('sequel-paranoid', '~> 0.7.0', '>= 0.7.0')
   # spec.add_dependency("sequel-factory", "~> 1.0.0")
 
