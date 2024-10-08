@@ -64,10 +64,9 @@ Expected Post model to have column: :title with: \
   but found: { db_type: 'varchar(255)' }
 ```
 
-**Please NOTE!**
-
-To test options with a value that is either `nil`, `true` or `false`, please use `:nil`, `:false`
-or `:true` and provide numbers as 'strings' instead, ie: `'1'` instead of `1`.
+> [!NOTE]
+> To test options with a value that is either `nil`, `true` or `false`, please use `:nil`, `:false`
+> or `:true` and provide numbers as 'strings' instead, ie: `'1'` instead of `1`.
 
 <br>
 
@@ -138,7 +137,8 @@ Expected Author to have a :one_to_one association :key_posts but no association 
 ```
 
 <br>
-<br>
+
+---
 
 ### `:one_to_many` association
 
@@ -163,7 +163,8 @@ it { _(m).must_have_one_to_many_association(:comments) }
 As above the assertion provides an extensive error message if something is wrong.
 
 <br>
-<br>
+
+---
 
 ### `:many_to_one` association
 
@@ -188,7 +189,8 @@ it { _(m).must_have_many_to_one_association(:author) }
 As above the assertion provides an extensive error message if something is wrong.
 
 <br>
-<br>
+
+---
 
 ### `:many_to_many` association
 
@@ -234,7 +236,8 @@ Expected Category to have a :many_to_many association :post but no association '
 ```
 
 <br>
-<br>
+
+---
 
 ### `assert_association() assertion`
 
@@ -287,6 +290,8 @@ instance validation methods are supported:
 
 With all valid options checked
 
+<br>
+
 ---
 
 ### `assert_validates_presence(obj, attribute, opts = {}, msg = nil)`
@@ -299,11 +304,13 @@ Test for validating presence of a model attribute
 let(:m) { Post.first }
 
 it { assert_validates_presence(m, :title) }
-
+ # or
 it { _(m).must_validate_presence_of(:title, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_length(obj, attribute, opts = {}, msg = nil)`
 
@@ -343,11 +350,13 @@ Size related options:
 let(:m) { Post.first }
 
 it { assert_validates_length(m, :title, { maximum: 12 }) }
-
+ # or
 it { _(m).must_validate_length_of(:title, { within: 4..12 }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_exact_length(obj, attribute, exact_length, opts = {}, msg = nil)`
 
@@ -359,11 +368,13 @@ Test for validating the exact length of a model's attribute.
 let(:m) { Post.first }
 
 it { assert_validates_exact_length(m, :title, 12, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_exact_length_of(:title, 12, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_length_range(obj, attribute, range, opts = {}, msg = nil)`
 
@@ -375,11 +386,13 @@ Test for validating the exact length of a model's attribute.
 let(:m) { Post.first }
 
 it { assert_validates_length_range(m, :title, 4..12, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_length_range_of(:title, 4..12, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_max_length(obj, attribute, max_length, opts = {}, msg = nil)`
 
@@ -391,11 +404,13 @@ Test for validating the maximum length of a model's attribute.
 let(:m) { Post.first }
 
 it { assert_validates_max_length(m, :title, 12, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_max_length_of(:title, 12, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_min_length(obj, attribute, min_length, opts = {}, msg = nil)`
 
@@ -407,11 +422,13 @@ Test for validating the minimum length of a model's attribute.
 let(:m) { Post.first }
 
 it { assert_validates_min_length(m, :title, 12, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_min_length_of(:title, 12, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_format(obj, attribute, opts = {}, msg = nil)`
 
@@ -423,11 +440,13 @@ Test for validating the format of a model's attribute with a regexp.
 let(:m) { Post.first }
 
 it { assert_validates_format(m, :title, { with: /[a-z+]/ }) }
-
+ # or
 it { _(m).must_validate_format_of(:title, { with: /[a-z]+/ }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_inclusion(obj, attribute, opts = {}, msg = nil)`
 
@@ -440,11 +459,13 @@ set of values.
 let(:m) { Post.first }
 
 it { assert_validates_inclusion(m, :status, { in: [:a, :b, :c] }) }
-
+ # or
 it { _(m).must_validate_inclusion_of(:status, { in: [:a, :b, :c] }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_integer(obj, attribute, opts = {}, msg = nil)`
 
@@ -456,11 +477,13 @@ Test for validating that a a model's attribute is an integer.
 let(:m) { Post.first }
 
 it { assert_validates_integer(m, :author_id, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_integer_of(:author_id, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_numericality(obj, attribute, opts = {}, msg = nil)`
 
@@ -472,11 +495,13 @@ Test for validating that a model's attribute is numeric (number).
 let(:m) { Post.first }
 
 it { assert_validates_numericality(m, :author_id, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_numericality_of(:author_id, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_uniqueness(obj, attribute, opts = {}, msg = nil)`
 
@@ -488,11 +513,13 @@ Test for validating that a model's attribute is unique.
 let(:m) { Post.first }
 
 it { assert_validates_uniqueness(m, :urlslug, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_uniqueness_of(:urlslug, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_acceptance(obj, attribute, opts = {}, msg = nil)`
 
@@ -504,11 +531,13 @@ Test for validating the acceptance of a model's attribute.
 let(:m) { Order.new }
 
 it { assert_validates_acceptance(m, :toc, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_acceptance_of(:toc, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 ### `assert_validates_confirmation(obj, attribute, opts = {}, msg = nil)`
 
@@ -520,11 +549,13 @@ Test for validating the confirmation of a model's attribute.
 let(:m) { User.new }
 
 it { assert_validates_confirmation(m, :password, { message: '...' }) }
-
+ # or
 it { _(m).must_validate_confirmation_of(:password, { message: '...' }) }
 ```
 
 <br>
+
+---
 
 Each validation assertion have a responding negative test, ie: `refute_validate_presence()`
 
@@ -555,13 +586,13 @@ let(:m) { Post.first }
 
 it "should validate presence of :title column" do
   assert_validates_presence(m, :title)
-
+  # or
   _(m).must_validate_presence_of(:title)
 end
 
 it "should validate format of :title column with regexp" do
   assert_validates_format(m, :title, /\w+/)
-
+  # or
   _(m).must_validate_format_of(:title,  /\w+/)
 end
 ```
@@ -578,8 +609,12 @@ This gem also contains a collection of "helpers" that aid working with Sequel mo
 
 ### `assert_timestamped_model(model, opts = {}, msg = nil)`
 
-Quickly test if a model class is timestamped with .plugin(:timestamps) with
+Quickly test if a model class is timestamped with `.plugin(:timestamps)` with
 [Sequel-Timestamps](http://sequel.jeremyevans.net/rdoc-plugins/classes/Sequel/Plugins/Timestamps.html)
+
+> [!NOTE]
+> The test examples below uses the [minitest-assert_errors](https://github.com/kematzy/minitest-assert_errors) package.
+
 
 ```ruby
  # Declared locally in the Model
@@ -597,9 +632,8 @@ Quickly test if a model class is timestamped with .plugin(:timestamps) with
  assert_error_raised(msg) { assert_timestamped_model(Post) }
 ```
 
-**NOTE!**
-
-You can also pass attributes to the created model in the tests via the `opts` hash like this:
+> [!TIP]
+> You can also pass attributes to the created model in the tests via the `opts` hash like this:
 
 ```ruby
 assert_no_error do
@@ -609,6 +643,10 @@ end
 
 Timestamps can be declared globally for all models via `Sequel::Model.plugin(:timestamps)` before
 the models are migrated.
+
+<br>
+
+---
 
 ### `assert_timestamped_model_instance(model, opts = {}, msg = nil)`
 
@@ -646,6 +684,8 @@ end
 
 <br>
 
+---
+
 ### `assert_paranoid_model(model, opts = {}, msg = nil)`
 
 Test if a model class is paranoid with .plugin(:paranoid) via
@@ -667,9 +707,8 @@ msg = /Not a plugin\(:paranoid\) model, available plugins are/
 assert_error_raised(msg) { assert_paranoid_model(Post) }
 ```
 
-**NOTE!**
-
-You can also pass attributes to the created model in the tests via the `opts` hash like this:
+> [!TIP]
+> You can also pass attributes to the created model in the tests via the `opts` hash like this:
 
 ```ruby
 assert_no_error do
@@ -678,6 +717,8 @@ end
 ```
 
 <br>
+
+---
 
 ### `refute_timestamped_model(model, msg = nil)`
 
@@ -706,6 +747,8 @@ it { refute_timestamped_model(Post) }
 
 <br>
 
+---
+
 ### `refute_paranoid_model(model, msg = nil)`
 
 Test to ensure a model is NOT declared with .plugin(:paranoid) using
@@ -730,8 +773,6 @@ it { refute_paranoid_model(Post) }
 
 ---
 
-<br>
-
 ## Miscellaneous Helpers
 
 This gem also contains a collection of "helpers" that aid working with Sequel models:
@@ -746,10 +787,9 @@ Enables quick tests to ensure that the basic CRUD functionality is working corre
 ensure_working_CRUD(User, :name)
 ```
 
-**NOTE!**
-
-- the passed `:model` argument must be the actual Model class and NOT a string or symbol
-- the passed attribute `:attribute` must be a String attribute or the tests will fail
+> [!NOTE]
+> - the passed `:model` argument must be the actual Model class and NOT a string or symbol
+> - the passed attribute `:attribute` must be a String attribute or the tests will fail
 
 <br>
 
