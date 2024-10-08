@@ -1,5 +1,7 @@
 # frozen_string_literal: false
 
+require 'minitest/spec'
+
 # reopening to add validations functionality
 module Minitest
   # add support for Assert syntax

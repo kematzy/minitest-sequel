@@ -1,7 +1,7 @@
 # frozen_string_literal: false
 
-# require "minitest/sequel"
 require 'minitest/assertions'
+require 'minitest/spec'
 
 # reopening to add validations functionality
 module Minitest
