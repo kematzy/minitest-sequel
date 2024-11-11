@@ -863,13 +863,15 @@ Then in your tests you should be good to go when using the sequel assertions.
 ## Development
 
 After checking out the repo, run `bundle install` to install all dependencies.
-Then, run `rake spec` to run the tests.
+Then, run `bundle exec rake spec` to run the tests.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
-To release a new version, update the version number in `version.rb`, and then run
-`bundle exec rake release`, which will create a git tag for the version, push git commits and
-tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To release a new version:
+  1) update the version number in `version.rb`;
+  2) run `bundle exec rake release`, which will create a git tag for the version,
+  3) push git commits and tags
+  4) push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
